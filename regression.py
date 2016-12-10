@@ -1,4 +1,5 @@
 from sklearn            import linear_model
+import load_data
 
 
 def get_accuracy(x, y, classifier):
@@ -10,19 +11,37 @@ def get_accuracy(x, y, classifier):
     if prediction == y_i:
       num_correct += 1
 
+  if len(x) == 0:
+    return "No data samples"
+
   return float(num_correct) / len(x)
 
 
-# TODO: write get_data
-def get_data():
-  x_training, y_training = get_training_data()
-  x_validate, y_validate = get_validate_data()
-  x_testing, y_testing = get_testing_data()
-  data = [x_training, y_training, x_validate, y_validate, x_testing, y_testing]
+def get_data(filename, num_training, num_validate, num_testing):
+  index = 0
+  x_training, y_training, x_validate, y_validate, x_testing, y_testing = [], [], [], [], [], []
 
-  return data
+  with open(filename, 'r') as f:
+    reader = csv.reader(f)
+    for row in reader:
+      x = row[:-1]
+      y = row[-1]
 
-alphas = [ 0, 0.01, 0.1, 1, 10 ] # degree of regularizations
+      if index > 0 and index <= num_training:
+        x_training.append(x)
+        y_training.append(y)
+
+      elif index > num_training and index <= num_training + num_validate:
+        x_validate.append(x)
+        y_validate.append(y)
+
+      elif index > num_training + num_validate and index <= num_training + num_validate + num_testing:
+        x_testing.append(x)
+        y_testing.append(y)
+
+      index += 1
+
+  return [x_training, y_training, x_validate, y_validate, x_testing, y_testing]
 
 
 def train_validate_test_classifier(data, classifier):
@@ -40,7 +59,10 @@ def train_validate_test_classifier(data, classifier):
   return testing_accuracy
 
 
-data = get_data()
+filename = ""
+alphas = [ 0, 0.01, 0.1, 1, 10 ] # degree of regularizations
+
+data = get_data(filename)
 
 linear_classifier = linear_model.LinearRegression()
 logistic_classifier = linear_model.LogisticRegression()
