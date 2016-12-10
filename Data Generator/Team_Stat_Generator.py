@@ -48,28 +48,21 @@ def crawlSeason(matchupsData, writefile, numberOfMatches):
 		with open(writefile, 'wb') as csvfile:
 			writer = csv.writer(csvfile, delimiter=',',)
 	                           
-			writer.writerow(['Date', 'Away Team', 'Home Team', 'Away Team ELO', 'Away Team avg. points scored', 'Away Team avg. points allowed',
+			writer.writerow(['Date', 'Away Team', 'Home Team', 'Away Final Score', 'Home Final Score', 'Away Team ELO', 'Away Team avg. points scored', 'Away Team avg. points allowed',
 							'Away Team games played', 'Away Team games won', 'Away Team win rate',
 							'Home Team ELO', 'Home Team avg. points scored', 'Home Team avg. points allowed',
 							'Home Team games played', 'Home Team games won', 'Home Team win rate'])
 			while (count < numberOfMatches):
 
-				#try:
-				currentLine = reader.next()
-				#except StopIteration:
-					#break
+				try:
+					currentLine = reader.next()
+				except StopIteration:
+					break
 				
 				currentGameID = currentLine[0]
 				currentDate = currentGameID[0:8]
 				currentHomeTeam = currentGameID[-3:len(currentGameID)]
 				currentAwayTeam = currentGameID[-6:-3]
-				writer.writerow([currentDate, AbbreviationDictionary[currentAwayTeam], AbbreviationDictionary[currentHomeTeam],
-								MasterTeamDictionary[currentAwayTeam][0], MasterTeamDictionary[currentAwayTeam][1],
-								MasterTeamDictionary[currentAwayTeam][2], MasterTeamDictionary[currentAwayTeam][3],
-								MasterTeamDictionary[currentAwayTeam][4], MasterTeamDictionary[currentAwayTeam][5],
-								MasterTeamDictionary[currentHomeTeam][0], MasterTeamDictionary[currentHomeTeam][1],
-								MasterTeamDictionary[currentHomeTeam][2], MasterTeamDictionary[currentHomeTeam][3],
-								MasterTeamDictionary[currentHomeTeam][4], MasterTeamDictionary[currentHomeTeam][5],])
 				
 
 				
@@ -110,6 +103,15 @@ def crawlSeason(matchupsData, writefile, numberOfMatches):
 
 				HomeTeamFinalScore = int(currentLine[27])
 				AwayTeamFinalScore = int(currentLine[28])
+
+				writer.writerow([currentDate, AbbreviationDictionary[currentAwayTeam], AbbreviationDictionary[currentHomeTeam],
+								AwayTeamFinalScore, HomeTeamFinalScore,
+								MasterTeamDictionary[currentAwayTeam][0], MasterTeamDictionary[currentAwayTeam][1],
+								MasterTeamDictionary[currentAwayTeam][2], MasterTeamDictionary[currentAwayTeam][3],
+								MasterTeamDictionary[currentAwayTeam][4], MasterTeamDictionary[currentAwayTeam][5],
+								MasterTeamDictionary[currentHomeTeam][0], MasterTeamDictionary[currentHomeTeam][1],
+								MasterTeamDictionary[currentHomeTeam][2], MasterTeamDictionary[currentHomeTeam][3],
+								MasterTeamDictionary[currentHomeTeam][4], MasterTeamDictionary[currentHomeTeam][5]])
 				result = False
 				if(HomeTeamFinalScore > AwayTeamFinalScore):
 					result = True
@@ -176,6 +178,7 @@ if __name__ == '__main__':
 	'NOH' : list(StartingValues),
 	'NYK' : list(StartingValues),
 	'ORL' : list(StartingValues),
+	'OKC' :	list(StartingValues),
 	'PHI' : list(StartingValues),
 	'PHX' : list(StartingValues),
 	'POR' : list(StartingValues),
@@ -209,6 +212,7 @@ if __name__ == '__main__':
 	'NOK' : 'New Orleans',
 	'NOH' : 'New Orleans',
 	'NYK' : 'New York',
+	'OKC' : 'Oklahoma City',
 	'ORL' : 'Orlando',
 	'PHI' : 'Philadelphia',
 	'PHX' : 'Phoenix',
