@@ -50,6 +50,10 @@ def crawlSeason(matchupsData, writefile, numberOfMatches):
 	                           
 			writer.writerow(['Date', 'Away Team', 'Home Team', 'Away Final Score', 'Home Final Score', 'Away Team ELO', 'Away Team avg. points scored', 'Away Team avg. points allowed',
 							'Away Team games played', 'Away Team games won', 'Away Team win rate',
+							'Away Team home court points scored', 'Away Team home court points allowed',
+							'Away Team home court games played', 'Away Team home court win rate',
+							'Home Team home court points scored', 'Home Team home court points allowed',
+							'Home Team home court games played', 'Home Team home court win rate'
 							'Home Team ELO', 'Home Team avg. points scored', 'Home Team avg. points allowed',
 							'Home Team games played', 'Home Team games won', 'Home Team win rate'])
 			while (count < numberOfMatches):
@@ -109,13 +113,18 @@ def crawlSeason(matchupsData, writefile, numberOfMatches):
 								MasterTeamDictionary[currentAwayTeam][0], MasterTeamDictionary[currentAwayTeam][1],
 								MasterTeamDictionary[currentAwayTeam][2], MasterTeamDictionary[currentAwayTeam][3],
 								MasterTeamDictionary[currentAwayTeam][4], MasterTeamDictionary[currentAwayTeam][5],
+								MasterTeamDictionary[currentAwayTeam][6], MasterTeamDictionary[currentAwayTeam][7],
+								MasterTeamDictionary[currentAwayTeam][8], MasterTeamDictionary[currentAwayTeam][10],
 								MasterTeamDictionary[currentHomeTeam][0], MasterTeamDictionary[currentHomeTeam][1],
 								MasterTeamDictionary[currentHomeTeam][2], MasterTeamDictionary[currentHomeTeam][3],
-								MasterTeamDictionary[currentHomeTeam][4], MasterTeamDictionary[currentHomeTeam][5]])
+								MasterTeamDictionary[currentHomeTeam][4], MasterTeamDictionary[currentHomeTeam][5],
+								MasterTeamDictionary[currentHomeTeam][6], MasterTeamDictionary[currentHomeTeam][7],
+								MasterTeamDictionary[currentHomeTeam][8], MasterTeamDictionary[currentHomeTeam][10]])
 				result = False
 				if(HomeTeamFinalScore > AwayTeamFinalScore):
 					result = True
 					MasterTeamDictionary[currentHomeTeam][4] += 1
+					MasterTeamDictionary[currentHomeTeam][9] += 1
 				else:
 					MasterTeamDictionary[currentAwayTeam][4] += 1
 
@@ -142,10 +151,16 @@ def crawlSeason(matchupsData, writefile, numberOfMatches):
 				MasterTeamDictionary[currentAwayTeam][1] = newAwayTeamAvgPointsScored
 				MasterTeamDictionary[currentAwayTeam][2] = newAwayTeamAvgPointsAllowed
 
+				MasterTeamDictionary[currentHomeTeam][6] = (MasterTeamDictionary[currentHomeTeam][6] * MasterTeamDictionary[currentHomeTeam][8] + HomeTeamFinalScore)/ (MasterTeamDictionary[currentHomeTeam][8]+1)
+				MasterTeamDictionary[currentHomeTeam][7] = (MasterTeamDictionary[currentHomeTeam][7] * MasterTeamDictionary[currentHomeTeam][8] + AwayTeamFinalScore)/ (MasterTeamDictionary[currentHomeTeam][8]+1)
+				MasterTeamDictionary[currentHomeTeam][8] +=1
+
+
 				MasterTeamDictionary[currentHomeTeam][3] +=1
 				MasterTeamDictionary[currentAwayTeam][3] +=1
 
 				MasterTeamDictionary[currentHomeTeam][5] = float(MasterTeamDictionary[currentHomeTeam][4]) / float(MasterTeamDictionary[currentHomeTeam][3])
+				MasterTeamDictionary[currentHomeTeam][10] = float(MasterTeamDictionary[currentHomeTeam][9]) / float(MasterTeamDictionary[currentHomeTeam][8])
 				MasterTeamDictionary[currentAwayTeam][5] = float(MasterTeamDictionary[currentAwayTeam][4]) / float(MasterTeamDictionary[currentAwayTeam][3])
 				count +=1
 			
@@ -154,7 +169,7 @@ def crawlSeason(matchupsData, writefile, numberOfMatches):
 	return
 
 if __name__ == '__main__':
-	StartingValues = [100.0,0.0,0.0, 0, 0, 0.0] #(ELO, Avg. points scored, Avg. points allowed, games played, games won, win rate)
+	StartingValues = [100.0,0.0,0.0, 0, 0, 0.0, 0.0, 0.0, 0, 0, 0.0] #(ELO, Avg. points scored, Avg. points allowed, games played, games won, win rate, avg. points scored in home court, avg. points allowed home court, home court games played, home court wins, home court win rate)
 	MasterTeamDictionary = {
 	'ATL' : list(StartingValues),
 	'BOS' : list(StartingValues),
@@ -226,5 +241,5 @@ if __name__ == '__main__':
 	}
 	
 
-	crawlSeason('matchups2007.txt', '2006-2007 Game Log.csv', 1230)
+	crawlSeason('data/matchups2007.txt', 'data/2006-2007 Game Log.csv', 1230)
 
