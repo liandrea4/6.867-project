@@ -2,6 +2,7 @@ import requests
 import urllib2
 import csv
 import json
+import sys
 
 LINE_ID = "FINAL<strong" # xmlns:odds=\"http://odds.sbrforum.com\""
 
@@ -35,10 +36,10 @@ DAYS_IN_MONTH = {
   "12" : 31
 }
 
-LEAP_YEAR_DAYS = 29
+LEAP_YEAR_DAYS = "29"
 LEAP_YEAR_FACTOR = 4
 
-YEARS = [ "2011", "2012" ]
+YEARS = [ "2006", "2007", "2008", "2009", "2010", "2011", "2012" ]
 MONTHS = [ "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12" ]
 PREPROCESSED_DAYS = [ "01", "02", "03", "04", "05", "06", "07", "08", "09"]
 
@@ -170,6 +171,8 @@ def scrape_multiple_dates(filename, fieldnames, start_year, end_year):
 
     for month in MONTHS:
       days = PREPROCESSED_DAYS + [ str(num) for num in range(10, DAYS_IN_MONTH[month] + 1)]
+      if month == '02' and int(year) % LEAP_YEAR_FACTOR == 0:
+        days += [LEAP_YEAR_DAYS]
 
       for day in days:
         date = year + month + day
@@ -179,8 +182,12 @@ def scrape_multiple_dates(filename, fieldnames, start_year, end_year):
 
 
 if __name__ == '__main__':
-  start_year = 2011
-  end_year = 2012
+  try:
+    start_year = int(sys.argv[1])
+    end_year = int(sys.argv[2])
+  except Exception:
+    start_year = 2011
+    end_year = 2012
 
   filename = "spreads.csv"
   fieldnames = [ 'date', 'team1', 'team2', 'team1_score', 'team2_score', 'spreads_json' ]
