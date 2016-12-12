@@ -52,10 +52,12 @@ def crawlSeason(matchupsData, writefile, numberOfMatches):
 							'Away Team games played', 'Away Team games won', 'Away Team win rate',
 							'Away Team home court points scored', 'Away Team home court points allowed',
 							'Away Team home court games played', 'Away Team home court win rate',
-							'Home Team home court points scored', 'Home Team home court points allowed',
-							'Home Team home court games played', 'Home Team home court win rate'
+							'Away Team possessions', 'Away Team defensive rebounds', 'Away Team offensive rebounds',
 							'Home Team ELO', 'Home Team avg. points scored', 'Home Team avg. points allowed',
-							'Home Team games played', 'Home Team games won', 'Home Team win rate'])
+							'Home Team games played', 'Home Team games won', 'Home Team win rate',
+							'Home Team home court points scored', 'Home Team home court points allowed',
+							'Home Team home court games played', 'Home Team home court win rate',
+							'Home Team possessions', 'Home Team defensive rebounds', 'Home Team offensive rebounds'])
 			while (count < numberOfMatches):
 
 				try:
@@ -67,7 +69,13 @@ def crawlSeason(matchupsData, writefile, numberOfMatches):
 				currentDate = currentGameID[0:8]
 				currentHomeTeam = currentGameID[-3:len(currentGameID)]
 				currentAwayTeam = currentGameID[-6:-3]
-				
+				HomeTeamPossessions = 0
+				AwayTeamPossessions = 0
+				HomeTeamDefensiveRebounds = 0
+				AwayTeamDefensiveRebounds = 0
+				HomeTeamOffensiveRebounds = 0
+				AwayTeamOffensiveRebounds = 0
+
 
 				
 				while(True):
@@ -78,6 +86,13 @@ def crawlSeason(matchupsData, writefile, numberOfMatches):
 					
 					if(currentGameID == nextLine[0]):
 						currentLine = nextLine
+						HomeTeamPossessions += float(currentLine[33])
+						AwayTeamPossessions += float(currentLine[34])
+						HomeTeamOffensiveRebounds += float(currentLine[39])
+						AwayTeamOffensiveRebounds += float(currentLine[40])
+						HomeTeamDefensiveRebounds += float(currentLine[41])
+						AwayTeamDefensiveRebounds += float(currentLine[42])
+
 					else:
 						break
 					
@@ -115,11 +130,13 @@ def crawlSeason(matchupsData, writefile, numberOfMatches):
 								MasterTeamDictionary[currentAwayTeam][4], MasterTeamDictionary[currentAwayTeam][5],
 								MasterTeamDictionary[currentAwayTeam][6], MasterTeamDictionary[currentAwayTeam][7],
 								MasterTeamDictionary[currentAwayTeam][8], MasterTeamDictionary[currentAwayTeam][10],
+								MasterTeamDictionary[currentAwayTeam][11], MasterTeamDictionary[currentAwayTeam][12], MasterTeamDictionary[currentAwayTeam][13],
 								MasterTeamDictionary[currentHomeTeam][0], MasterTeamDictionary[currentHomeTeam][1],
 								MasterTeamDictionary[currentHomeTeam][2], MasterTeamDictionary[currentHomeTeam][3],
 								MasterTeamDictionary[currentHomeTeam][4], MasterTeamDictionary[currentHomeTeam][5],
 								MasterTeamDictionary[currentHomeTeam][6], MasterTeamDictionary[currentHomeTeam][7],
-								MasterTeamDictionary[currentHomeTeam][8], MasterTeamDictionary[currentHomeTeam][10]])
+								MasterTeamDictionary[currentHomeTeam][8], MasterTeamDictionary[currentHomeTeam][10],
+								MasterTeamDictionary[currentHomeTeam][11], MasterTeamDictionary[currentHomeTeam][12], MasterTeamDictionary[currentHomeTeam][13]])
 				result = False
 				if(HomeTeamFinalScore > AwayTeamFinalScore):
 					result = True
@@ -152,10 +169,20 @@ def crawlSeason(matchupsData, writefile, numberOfMatches):
 				MasterTeamDictionary[currentAwayTeam][2] = newAwayTeamAvgPointsAllowed
 
 				MasterTeamDictionary[currentHomeTeam][6] = (MasterTeamDictionary[currentHomeTeam][6] * MasterTeamDictionary[currentHomeTeam][8] + HomeTeamFinalScore)/ (MasterTeamDictionary[currentHomeTeam][8]+1)
+
+
+				MasterTeamDictionary[currentHomeTeam][11] = float(MasterTeamDictionary[currentHomeTeam][3] * MasterTeamDictionary[currentHomeTeam][11] +HomeTeamPossessions)/ (MasterTeamDictionary[currentHomeTeam][3] +1)
+				MasterTeamDictionary[currentAwayTeam][11] = float(MasterTeamDictionary[currentAwayTeam][3] * MasterTeamDictionary[currentAwayTeam][11] +HomeTeamPossessions)/ (MasterTeamDictionary[currentAwayTeam][3] +1)
+				
+				MasterTeamDictionary[currentHomeTeam][12] = float(MasterTeamDictionary[currentHomeTeam][3] * MasterTeamDictionary[currentHomeTeam][12] +HomeTeamDefensiveRebounds)/ (MasterTeamDictionary[currentHomeTeam][3] +1)
+				MasterTeamDictionary[currentAwayTeam][12] = float(MasterTeamDictionary[currentAwayTeam][3] * MasterTeamDictionary[currentAwayTeam][12] +AwayTeamDefensiveRebounds)/ (MasterTeamDictionary[currentAwayTeam][3] +1)
+				
+				MasterTeamDictionary[currentHomeTeam][13] = float(MasterTeamDictionary[currentHomeTeam][3] * MasterTeamDictionary[currentHomeTeam][13] +HomeTeamOffensiveRebounds)/ (MasterTeamDictionary[currentHomeTeam][3] +1)
+				MasterTeamDictionary[currentAwayTeam][13] = float(MasterTeamDictionary[currentAwayTeam][3] * MasterTeamDictionary[currentAwayTeam][13] +AwayTeamOffensiveRebounds)/ (MasterTeamDictionary[currentAwayTeam][3] +1)
+				
 				MasterTeamDictionary[currentHomeTeam][7] = (MasterTeamDictionary[currentHomeTeam][7] * MasterTeamDictionary[currentHomeTeam][8] + AwayTeamFinalScore)/ (MasterTeamDictionary[currentHomeTeam][8]+1)
+				
 				MasterTeamDictionary[currentHomeTeam][8] +=1
-
-
 				MasterTeamDictionary[currentHomeTeam][3] +=1
 				MasterTeamDictionary[currentAwayTeam][3] +=1
 
@@ -169,7 +196,7 @@ def crawlSeason(matchupsData, writefile, numberOfMatches):
 	return
 
 if __name__ == '__main__':
-	StartingValues = [100.0,0.0,0.0, 0, 0, 0.0, 0.0, 0.0, 0, 0, 0.0] #(ELO, Avg. points scored, Avg. points allowed, games played, games won, win rate, avg. points scored in home court, avg. points allowed home court, home court games played, home court wins, home court win rate)
+	StartingValues = [100.0,0.0,0.0, 0, 0, 0.0, 0.0, 0.0, 0, 0, 0.0, 0.0, 0.0, 0.0] #(ELO, Avg. points scored, Avg. points allowed, games played, games won, win rate, avg. points scored in home court, avg. points allowed home court, home court games played, home court wins, home court win rate, avg. possessions per game, avg. defensive rebounds, avg. offensive rebounds)
 	MasterTeamDictionary = {
 	'ATL' : list(StartingValues),
 	'BOS' : list(StartingValues),
@@ -241,5 +268,5 @@ if __name__ == '__main__':
 	}
 	
 
-	crawlSeason('data/matchups2007.txt', 'data/2006-2007 Game Log.csv', 1230)
+	crawlSeason('data/matchups2009.txt', 'data/2008-2009 Game Log.csv', 1230)
 
