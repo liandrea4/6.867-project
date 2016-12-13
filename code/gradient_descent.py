@@ -1,4 +1,3 @@
-from loadParametersP1           import getData
 import matplotlib.pyplot        as plt
 import numpy
 

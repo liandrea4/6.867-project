@@ -186,8 +186,8 @@ if __name__ == '__main__':
     start_year = int(sys.argv[1])
     end_year = int(sys.argv[2])
   except Exception:
-    start_year = 2011
-    end_year = 2012
+    start_year = 2000
+    end_year = 2015
 
   filename = "spreads.csv"
   fieldnames = [ 'date', 'team1', 'team2', 'team1_score', 'team2_score', 'spreads_json' ]

@@ -80,7 +80,7 @@ Basic statistics, including points allowed and points scored, were available for
 
 Many of the features generated for training and testing our classifier were derived from this game data. In order to create a general proxy for how strong a team was, we calculated running averages of points allowed, points scored, win rate, etc. and used these as input features to our classifier. These running averages were initialized to equal numbers for all teams at the beginning of the season and were subsequently updated as more data became available. Because these numbers were arbitrarily initialized to equal at the beginning of the season however, running averages near the beginning of the season serve as less reliable data points, as outliers can significantly affect the running average.
 
-These statistics were therefore plotted over time throughout the season in order to approximate when the running averages for each of these statistics stabilized to reliable averages. An example graph is given in Figure 1, in which the running average win rate for a given team is plotted over course of the season.
+These statistics were therefore plotted over time throughout the season in order to approximate when the running averages for each of these statistics stabilized to reliable averages. Example plots are given in Figures 1 and 2, in which the running average win rate and points scored for a given team is plotted over course of the season.
 
 \begin{figure}[width=\linewidth]
 \centering
@@ -88,12 +88,18 @@ These statistics were therefore plotted over time throughout the season in order
 \caption{Win rate over time}
 \end{figure}
 
+\begin{figure}[width=\linewidth]
+\centering
+  \includegraphics[width=1\linewidth]{code/figures/points_scored.png}
+\caption{Points scored over time}
+\end{figure}
+
 In general, the running averages of the game data stabilized after approximately each team's twentieth game of the season. When generating our training, validation, and test sets therefore, we only used data after each team's twentieth game in order to ensure that the features extracted from the data were representative of true team performance.
 
 In order to compare our algorithm and our predicted spreads against Vegas and other betting authorities, we created a scraper to scrape relevant websites with both current and historical spreads. We primarily scraped this information from \texttt{http://www.sportsbookreview.com/betting-odds/} \texttt{nba-basketball/}.
 
 \section{Linear classifier}
-As a baseline, we started with a linear classifier using basic features including running averages of home/away team points scored, points allowed, Elo score, games won, games played, and win rate. Based on the 2006-2007 season, in predicting win/loss (as opposed to the spread of a win/loss), the linear classifier had an accuracy of 64.3\% on training data and 63.3\% on testing data.
+As a baseline, we used our own implementation of a linear classifier on basic features including running averages of home/away team points scored, points allowed, Elo score, games won, games played, and win rate. Based on the 2006-2007 season, in predicting win/loss (as opposed to the spread of a win/loss), the linear classifier had an accuracy of 64.3\% on training data and 63.3\% on testing data.
 
 After adding further features, such as home court advantage, were added to the model, the linear classifier has an accuracy of 72.3\% on training data and 66.9\% on testing data based on the 2008-2009 season.
 
@@ -107,14 +113,91 @@ These results for the performance of the linear classifier are summarized in Tab
     \begin{tabular}{ | c | c | c | }
       \hline
                       & Win/Lose Accuracy & Spread Error  \\ \hline
-      Basic features  & 63.3\%            & 10.07                 \\ \hline
-      Extra features  & 66.9\%            & 13.60                 \\ \hline
+      Basic features  & 63.3\%            & 10.07         \\ \hline
+      Extra features  & 66.9\%            & 13.60         \\ \hline
     \end{tabular}
   \end{center}
   \caption{Classifier performance on test dataset}
 \end{table}
 
-\section{Logistic classifier}
+Similar results were found when we used a polynomial basis and allowed the degree of the polynomial fitting the data to grow. Out of values for $M \in [1, 10]$, we found that a regression model with $M=1$ performed best, where $M=10$ on the other side of the spectrum led to extreme overfitting. The average spread error is summarized in Table 2 for each of the different possible values for $M$, and graphs for representative values of $M$ are illustrated in Figure 3. Note that for ease of illustration of data here, only the win rate feature is used as the feature vector
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c | c | c | }
+      \hline
+      \textbf{M=1}    & \textbf{M=2}    & \textbf{M=3}     & \textbf{M=4}     & \textbf{M=5}      \\ \hline
+      10.15  & 11.35  & 11.013  & 12.40   & 11.32    \\ \hline
+      \textbf{M=6}    & \textbf{M=7}    & \textbf{M=8}     & \textbf{M=9}     & \textbf{M=10}     \\ \hline
+      12.05  & 33.26  & 33.56   & 17.11   & 150.23   \\ \hline
+    \end{tabular}
+  \end{center}
+  \caption{Average spread error for M values}
+\end{table}
+
+\begin{figure}[width=\linewidth]
+\centering
+\begin{multicols}{2}
+  \includegraphics[width=1.2\linewidth]{code/figures/linear_regression(m=1).png}
+  \includegraphics[width=1.2\linewidth]{code/figures/linear_regression(m=2).png}
+  \includegraphics[width=1.2\linewidth]{code/figures/linear_regression(m=5).png}
+  \includegraphics[width=1.2\linewidth]{code/figures/linear_regression(m=10).png}
+\end{multicols}
+\caption{Win rate vs. actual spread}
+\end{figure}
+
+We additionally explored the use of generating training, validation, and testing datasets across multiple seasons of data. In this case, because we train the model against certain features of the teams playing (e.g. running average win rate, average points scored, average points allowed, etc.), and not the skill level associated with the team itself, we can aggregate data across multiple seasons. This holds true even if teams and their respective players have changed significantly between seasons, because the features we draw from the data are running averages calculated from the season so far.
+
+When we run the linear classifier on three seasons worth of data, in which the training, validation, and testing datasets are each made up of a season of data (about 1300 games), the accuracy of the algorithm improves as expected. More specifically, when run on three seasons of data, the linear classifier is able to classify win/loss of matchups with an accuracy of 72.3\% on training data and 68.6\% on testing data. In terms of spreads, the linear classifier predicts spreads with an average spread error of 8.98 points on training data and 9.29 points on testing data. Thus, increasing the size of the data set has a fairly significant improvement in the accuracy of the linear classifier when compared with the 66.9\% accuracy previously obtained for win/loss predictions and 13.60 spread error for spread predictions.
+
+As previously mentioned, we explored classification of the linear classifier with a set of basic features and a set of more complex partially derived from these basic features. The basic features included each team's Elo score, average points scored, average points allowed, number of games played, number of games won, and win rate. The additional features we added included home court advantage (e.g. home court average points scored, home court average points allowed, home court win rate, etc.) as well as possessions, offensive rebounds, and defensive rebounds. In order to understand which features contributed most heavily to the win/loss and spreads predictions, we plotted the weights of each of the features. These relative weights are illustrated in Figure 4, in which the win rate features (away team win rate, home team win rate, away team home court win rate, and home team home court win rate) were in general the most important features. For three seasons of data however in win/loss predictions, the other features contributed much more relative to the classifiers for spreads predictions and one season of data.
+
+\begin{figure}[width=\linewidth]
+\centering
+\begin{multicols}{2}
+  \includegraphics[width=1.2\linewidth]{code/figures/1season,winlose.png}
+  \includegraphics[width=1.2\linewidth]{code/figures/3seasons,winlose.png}
+  \includegraphics[width=1.2\linewidth]{code/figures/1season,spreads.png}
+  \includegraphics[width=1.2\linewidth]{code/figures/3seasons,spreads.png}
+\end{multicols}
+\caption{Linear classifier feature weights}
+\end{figure}
+
+Interestingly, when we train the linear classifier using only the win rate features, the classifier actually performs slightly better than with all the features. The numbers in Table 3 and 4 represent the accuracies and spread errors of the classifiers trained on all features and only win rate features when trained on one and three seasons of data, respectively. These findings seem to contradict the conclusions earlier in that adding more complex features such as home court advantage and rebounds improved the accuracy of the classifier. This could be due to overfitting to the number of features, especially in short periods of time in which averages might not necessarily be as representative of the overall skill level of a team.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c | }
+      \hline
+                         & Win/Lose Accuracy & Spread Error  \\ \hline
+      All features       & 66.9\%            & 13.6         \\ \hline
+      Only win rate      & 70.7\%            & 8.95         \\ \hline
+    \end{tabular}
+  \end{center}
+  \caption{Classifier performance on 1 season}
+\end{table}
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c | }
+      \hline
+                         & Win/Lose Accuracy & Spread Error  \\ \hline
+      All features       & 68.6\%            & 9.29         \\ \hline
+      Only win rate      & 68.7\%            & 9.14         \\ \hline
+    \end{tabular}
+  \end{center}
+  \caption{Classifier performance on 3 seasons}
+\end{table}
+
+
+
+
+\section{Evaluation}
+In addition to calculating and analyzing the average spread error, we also compared our spreads predictions against other betting authorities' spreads. After creating a scaper which scraped the spreads posted by other betting authorities, we were able to determine the rate at which our spread would have beaten the betting authority's spread. This would occur in two scenarios: (1) if our predicted spread indicates that the winning team would have won by more than the other betting authority's predicted spread (e.g. if our spread is -8 and the other betting authority's spread is -5 on a game in which the favored team won by more than five points), or (2) if the predicted spread indicates that the winning team would have won by less or lost compared with theo ther begging authority's predicted spread (e.g. if our spread is +2 and the other betting authority's spread is -5 on a game in which the favored team lost or won by less than five points).
+
+
+\section{Potential sources of failure}
+Some drawbacks to the algorithm presented here include the fact that we do not examine individual player data. This was a choice made largely due to the fact that individualized player data is quite difficult to obtain, especially in quantities large enough for accurate training, validation, and testing. Because we look at a team's performance overall so far in the season however, this means that our algorithm is susceptible to changes in starting player lineups, player trades made during the season, and player injuries. Thus, despite the acceptable performance of our algorithm, we do identify this source of weakness in the ability to predict spreads and classify win/loss in matchups. Future iterations of the algorithm would therefore primarily seek to address these potential sources of failure in order to further improve and refine the overall predictive power of the algorithm.
 
 
 \section{Breakdown of individual work}

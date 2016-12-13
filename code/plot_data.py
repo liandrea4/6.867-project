@@ -2,22 +2,40 @@ import matplotlib.pyplot     as plt
 import csv
 
 prefixes = [ "Away Team", "Home Team" ]
-fieldnames = ["Date",
-  "Away Team",
-  "Home Team",
-  "Away Team ELO",
-  "Away Team avg. points scored",
-  "Away Team avg. points allowed",
-  "Away Team games played",
-  "Away Team games won",
-  "Away Team win rate",
-  "Home Team ELO",
-  "Home Team avg. points scored",
-  "Home Team avg. points allowed",
-  "Home Team games played",
-  "Home Team games won",
-  "Home Team win rate"
+fieldnames = ['Date',
+  'Away Team',
+  'Home Team',
+  'Away Final Score',
+  'Home Final Score',
+  'Away Team ELO',
+  'Away Team avg. points scored',
+  'Away Team avg. points allowed',
+  'Away Team games played',
+  'Away Team games won',
+  'Away Team win rate',
+  'Away Team home court points scored',
+  'Away Team home court points allowed',
+  'Away Team home court games played',
+  'Away Team home court win rate',
+  'Away Team possessions',
+  'Away Team defensive rebounds',
+  'Away Team offensive rebounds',
+  'Home Team ELO',
+  'Home Team avg. points scored',
+  'Home Team avg. points allowed',
+  'Home Team games played',
+  'Home Team games won',
+  'Home Team win rate',
+  'Home Team home court points scored',
+  'Home Team home court points allowed',
+  'Home Team home court games played',
+  'Home Team home court win rate',
+  'Home Team possessions',
+  'Home Team defensive rebounds',
+  'Home Team offensive rebounds'
 ]
+
+win_rate_indices = [ 10, 14, 23, 27 ]
 
 teams_elo = {}
 teams_points_scored = {}
@@ -78,11 +96,12 @@ def read_data(filename):
 
 
 if __name__ == '__main__':
-  filename = "data/game_log_06_07.csv"
+  filename = "data/2008-2009 Game Log.csv"
 
   print "Reading data..."
   read_data(filename)
   print "Plotting data..."
-  plot_data(teams_games_played, "Games played over the course of the season", "# games played")
+
+  plot_data(teams_points_allowed, "Average points allowed", "Points allowed")
 
 
