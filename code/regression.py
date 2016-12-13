@@ -81,13 +81,13 @@ def train_validate_test_classifier(data, classifier, metric_fn):
 
   training = metric_fn(x_training, y_training, classifier)
   print "training: ", training
-  # validation = metric_fn(x_validate, y_validate, classifier)
-  # print "validation: ", validation
-  # testing = metric_fn(x_testing, y_testing, classifier)
-  # print "testing: ", testing
+  validation = metric_fn(x_validate, y_validate, classifier)
+  print "validation: ", validation
+  testing = metric_fn(x_testing, y_testing, classifier)
+  print "testing: ", testing
 
 
-filename = "data/game_log_06_07.csv"
+filename = "data/2008-2009 Game Log.csv" # "data/game_log_06_07.csv"
 alphas = [ 0, 0.01, 0.1, 1, 10 ] # degree of regularizations
 
 num_skip = 320 # stabilized by ~ each team's 20th game
@@ -105,15 +105,15 @@ logistic_classifier = linear_model.LogisticRegression()
 lasso_classifier = linear_model.Lasso()
 
 # print "Linear classifier"
-# train_validate_test_classifier(data_spreads, linear_classifier, get_accuracy)
+# train_validate_test_classifier(data_win_lose, linear_classifier, get_accuracy)
 # print "Logistic classifier"
 # train_validate_test_classifier(data_win_lose, logistic_classifier, get_accuracy)
 # print "Lasso classifier"
 # train_validate_test_classifier(data_win_lose, lasso_classifier, get_accuracy)
 
 
-# print "Linear classifier"
-# train_validate_test_classifier(data_spreads, linear_classifier, get_average_error)
+print "Linear classifier"
+train_validate_test_classifier(data_spreads, linear_classifier, get_average_error)
 
 
 # Linear classifier with all basic features on 06-07 (win/lose)
@@ -130,3 +130,14 @@ lasso_classifier = linear_model.Lasso()
 # training: 9.31
 # validation: 10.03
 # testing: 10.07
+
+# Linear classifier with more advanced features on 08-09 (win/lose)
+# training: 0.723
+# validation: 0.667
+# testing: 0.669
+
+# Linear classifier with more advanced features on 08-09 (spreads)
+# training: 8.53
+# validation: 10.722
+# testing: 13.596
+

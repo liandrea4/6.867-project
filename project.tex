@@ -47,34 +47,78 @@
 
 % The \icmltitle you define below is probably too long as a header.
 % Therefore, a short form for the running title is supplied here:
-\icmltitlerunning{6.867: Homework 2}
+\icmltitlerunning{6.867: Final Project}
 
 \begin{document}
 
 \twocolumn[
-  \icmltitle{6.867: Homework 2}
+  \icmltitle{6.867: Final Project}
 
   % % It is OKAY to include author information, even for blind
   % % submissions: the style file will automatically remove it for you
   % % unless you've provided the [accepted] option to the icml2013
   % % package.
-  % \icmlauthor{Your Name}{email@yourdomain.edu}
+  % \icmlauthor{Andrea Li}{liandrea@mit.edu}
   % \icmladdress{Your Fantastic Institute,
   %             314159 Pi St., Palo Alto, CA 94306 USA}
-  % \icmlauthor{Your CoAuthor's Name}{email@coauthordomain.edu}
+  % \icmlauthor{Tyson Chen}{ytchen33@mit.edu}
   % \icmladdress{Their Fantastic Institute,
   %             27182 Exp St., Toronto, ON M6H 2T1 CANADA}
 
   % You may provide any keywords that you
   % find helpful for describing your paper; these are used to populate
   % the "keywords" metadata in the PDF but will not be shown in the document
-  \icmlkeywords{boring formatting information, machine learning, ICML}
 
   \vskip 0.3in
 ]
 
-\section{Logistic regression}
-In this section, we explore logistic regression with L1 and L2 regularization. We use gradient descent to compare the resulting weight vectors under different regularizers and regularization parameters, and we evaluate the effect of these choices in the context of multiple data sets.
+\section{Introduction}
+
+\section{Data collection}
+In order to collect season data, we primarily used publicly available data from \texttt{http://basketballvalue.com/downloads.php}.
+Basic statistics, including points allowed and points scored, were available for seasons 2005-2011, and more sophisticated statistics, including rebounds, were avilable for seasons 2008-2011.
+
+Many of the features generated for training and testing our classifier were derived from this game data. In order to create a general proxy for how strong a team was, we calculated running averages of points allowed, points scored, win rate, etc. and used these as input features to our classifier. These running averages were initialized to equal numbers for all teams at the beginning of the season and were subsequently updated as more data became available. Because these numbers were arbitrarily initialized to equal at the beginning of the season however, running averages near the beginning of the season serve as less reliable data points, as outliers can significantly affect the running average.
+
+These statistics were therefore plotted over time throughout the season in order to approximate when the running averages for each of these statistics stabilized to reliable averages. An example graph is given in Figure 1, in which the running average win rate for a given team is plotted over course of the season.
+
+\begin{figure}[width=\linewidth]
+\centering
+  \includegraphics[width=1\linewidth]{code/figures/win_rate.png}
+\caption{Win rate over time}
+\end{figure}
+
+In general, the running averages of the game data stabilized after approximately each team's twentieth game of the season. When generating our training, validation, and test sets therefore, we only used data after each team's twentieth game in order to ensure that the features extracted from the data were representative of true team performance.
+
+In order to compare our algorithm and our predicted spreads against Vegas and other betting authorities, we created a scraper to scrape relevant websites with both current and historical spreads. We primarily scraped this information from \texttt{http://www.sportsbookreview.com/betting-odds/} \texttt{nba-basketball/}.
+
+\section{Linear classifier}
+As a baseline, we started with a linear classifier using basic features including running averages of home/away team points scored, points allowed, Elo score, games won, games played, and win rate. Based on the 2006-2007 season, in predicting win/loss (as opposed to the spread of a win/loss), the linear classifier had an accuracy of 64.3\% on training data and 63.3\% on testing data.
+
+After adding further features, such as home court advantage, were added to the model, the linear classifier has an accuracy of 72.3\% on training data and 66.9\% on testing data based on the 2008-2009 season.
+
+We additionally explored the ability of the classifier to predict spreads on games, in which the margin of victory is taken into account instead of a simple win/loss. In this case, the accuracy metric was the absolute value of the difference between the predicted spread and the actual spread. Using basic features on the 2006-2007 season, the average absolute value spread error was 9.31 points for training data and 10.07 points for testing data.
+
+After adding further features, the average absolute value spread error decreased to 8.53 points for training data but increased to 13.60 points for testing data. This would imply that the classifier might be overfitting to the features that are provided as input to the algorithm, which would be expected for more complex architectures but was surprising in the context of the linear classifier explored here.
+
+These results for the performance of the linear classifier are summarized in Table 1.
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c | }
+      \hline
+                      & Win/Lose Accuracy & Spread Error  \\ \hline
+      Basic features  & 63.3\%            & 10.07                 \\ \hline
+      Extra features  & 66.9\%            & 13.60                 \\ \hline
+    \end{tabular}
+  \end{center}
+  \caption{Classifier performance on test dataset}
+\end{table}
+
+\section{Logistic classifier}
+
+
+\section{Breakdown of individual work}
+The breakdown of work between the two members of the group largely followed that given in the original project proposal. Andrea and Tyson jointly worked on preliminary review of the current techniques and the state of the art. Following this, Tyson was primarily involved in the collection of game data from past seasons, and Andrea created the scraper to collect data on historical spreads put out by various betting organizations on previous games. Andrea explored preliminary models such as linear regression, logistic regression, and regression with various basis functions and various degrees of regularization, and Tyson chiefly explored a neural network approach. As discussed during the project proposal meeting, we decided not to implement a convolutional neural network for this problem, as the architecture did not fit the structure of the problem as closely. We each tested the models we worked on against data test sets and historical spreads, and we split the writing up of the report equally.
 
 
 \end{document}
