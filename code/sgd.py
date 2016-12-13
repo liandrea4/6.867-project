@@ -1,6 +1,4 @@
-from loadFittingDataP1      import getData
-from gradient_descent       import gradient_descent
-from gradient_descent       import make_numeric_gradient_calculator
+from gradient_descent       import gradient_descent, make_numeric_gradient_calculator
 import matplotlib.pyplot    as plt
 import numpy
 
