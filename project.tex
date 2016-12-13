@@ -72,13 +72,29 @@
   \vskip 0.3in
 ]
 
+
 \section{Introduction}
+The NBA is currently one of the most popular sports in the world. Just a few months ago, over 30.8 million viewers tuned into watch Game 7 of the NBA finals between the Cleveland Cavaliers and the Golden State Warriors making it the third most viewed event in the U.S in 2016 (just behind the Super Bowl and the Academy Awards). As a result of this popularity, the betting market for the sport is enormous. NBA commissioner Adam Silver predicted the market to be around 400 billion dollars.
+
+This report is concerned with exploring a variety of supervised learning techniques in hopes of being able to make predictions of game outcomes that are more accurate than the predictions made by NBA experts who set the betting line for each game. Before diving too deep into the algorithms, models, and predictions, we want to provide a quick overview of the structure of an NBA season as well as the various types of bets you can make in the NBA.
+
+First, it is important to understand that the NBA is comprised of 30 teams split into two conferences (East and West). These 30 teams will each play 82 games across the regular season meaning that 1230 NBA games are played in total each season. For each game of the season, there are multiple bets that can be made. Below, we will discuss the two most common bets:
+
+\textit{a) Win/ Loss:} This is the most basic bet that can be made. The gambler simply picks which team he believes will win the game and if he is correct then he'll win money.
+
+\textit{b) The Spread:} The spread is a bit more advanced than simply win/loss. When a gambler bets against the spread, he either bets that the favorite shall win by more than the spread or that the underdog will lose by less than the spread. Typically, the spread is expressed as a negative number, which signifies the expected margin of victory for the favorite. In order to place a bet against the spread, a gambler generally needs to bet \$110 for the chance to win a \$100 payoff. The amount required for the chance to win \$100 is generally expressed in parentheses.\\
+e.g. Golden State Warriors -7.4 (-110) \\
+     Cleveland Cavaliers 7.4 (-110)
+
+The gambling authority generally selects the spread with the goal of splitting the betting money down the line in order to essentially make arbitrage with 0 risk. Due to the fact that the spreads are created in this manner and not with accuracy in mind, we believe that there is definitely room for improvement
 
 \section{Data collection}
-In order to collect season data, we primarily used publicly available data from \texttt{http://basketballvalue.com/downloads.php}.
-Basic statistics, including points allowed and points scored, were available for seasons 2005-2011, and more sophisticated statistics, including rebounds, were avilable for seasons 2008-2011.
+For this project, we needed to gather a great deal of historical NBA game statistics in order to train our models. To collect season data, we primarily used publicly available data from \texttt{http://basketballvalue.com/downloads.php}.
+These datasets contained time series data in the form of matchup logs for all NBA games ranging from 2005 to 2012. Matchup logs basically describe the interactions that occur between 5-person units. A new entry is created every time a substitution is made in a game. Through running a python script on these matchup logs, we were able to derive and construct a variety of statistics that would later serve as features. For seasons 2005-2008, the matchup logs were a bit simpler, so we were only able to derive basic statistics including points allowed and points scored. The matchup logs became a bit more advanced in seasons 2008-2011, which allowed us to derive more sophisticated statistics including offensive and defensive rebounds as well as possessions.
 
-Many of the features generated for training and testing our classifier were derived from this game data. In order to create a general proxy for how strong a team was, we calculated running averages of points allowed, points scored, win rate, etc. and used these as input features to our classifier. These running averages were initialized to equal numbers for all teams at the beginning of the season and were subsequently updated as more data became available. Because these numbers were arbitrarily initialized to equal at the beginning of the season however, running averages near the beginning of the season serve as less reliable data points, as outliers can significantly affect the running average.
+For all seasons, we also constructed a new feature called ELO that is basically a reflection of a teams performance taking into account strength of schedule. What this means is that if two teams possess identical records, one of the teams may actually have a higher ELO score if they had to face stronger competition. In our literature review, this was not a feature that had been incorporated before in machine learning so we were particularly excited about its implications.
+
+Many of the features generated for training and testing our predictor were derived from this game data. In order to create a general proxy for how strong a team was, we calculated running averages of points allowed, points scored, win rate, ELO, etc. and used these as input features to our classifier. These running averages were initialized to equal numbers for all teams at the beginning of the season and were subsequently updated as more data became available. Because these numbers were arbitrarily initialized to equal at the beginning of the season, however, running averages near the beginning of the season serve as less reliable data points, as outliers can significantly affect the running average.
 
 These statistics were therefore plotted over time throughout the season in order to approximate when the running averages for each of these statistics stabilized to reliable averages. Example plots are given in Figures 1 and 2, in which the running average win rate and points scored for a given team is plotted over course of the season.
 
@@ -94,9 +110,12 @@ These statistics were therefore plotted over time throughout the season in order
 \caption{Points scored over time}
 \end{figure}
 
-In general, the running averages of the game data stabilized after approximately each team's twentieth game of the season. When generating our training, validation, and test sets therefore, we only used data after each team's twentieth game in order to ensure that the features extracted from the data were representative of true team performance.
+In general, the running averages of the game data stabilized after approximately each team's twentieth game of the season (around the 1/4th mark of the season). When generating our training, validation, and test sets therefore, we only used data after each team's twentieth game in order to ensure that the features extracted from the data were representative of true team performance.
 
 In order to compare our algorithm and our predicted spreads against Vegas and other betting authorities, we created a scraper to scrape relevant websites with both current and historical spreads. We primarily scraped this information from \texttt{http://www.sportsbookreview.com/betting-odds/} \texttt{nba-basketball/}.
+
+\section{Normalization}
+The need for feature normalization arises because our features are on different scales. For example, the average points a team scores every game is around $100$ whereas the average number of offensive rebounds a team gets per game is around $15$. In order to normalize the features we took a Z score approach that centered all the data at $0$ and set the standard deviation to be $1$.
 
 \section{Linear classifier}
 As a baseline, we used our own implementation of a linear classifier on basic features including running averages of home/away team points scored, points allowed, Elo score, games won, games played, and win rate. Based on the 2006-2007 season, in predicting win/loss (as opposed to the spread of a win/loss), the linear classifier had an accuracy of 64.3\% on training data and 63.3\% on testing data.
@@ -188,8 +207,6 @@ Interestingly, when we train the linear classifier using only the win rate featu
   \end{center}
   \caption{Classifier performance on 3 seasons}
 \end{table}
-
-
 
 
 \section{Evaluation}
