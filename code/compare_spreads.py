@@ -1,8 +1,12 @@
+<<<<<<< HEAD
+from regression      import get_spread, get_file_data
+=======
 from regression      import get_spread
+>>>>>>> d86eddb2d62b8fc162704cfa02f58ab633794d21
 from sklearn         import linear_model, neural_network
 import csv
 import json
-
+import nn
 
 win_rate_indices = [ 10, 14, 23, 27 ]
 spreads_fieldnames = [ 'date', 'team1', 'team2', 'team1_score', 'team2_score', 'spreads_json' ]
@@ -134,11 +138,19 @@ if __name__ == '__main__':
   spreads_error_dict = {}
   spreads_winlose_dict = {}
 
+  best_architecture = nn.find_best_architecture(file_data_spreads, False)
+  best_predictor = neural_network.MLPRegressor(hidden_layer_sizes=best_architecture[0], solver="lbfgs", alpha=best_architecture[1])
+  best_predictor.fit(x_training, y_training)
+
   # Spread = away score - home score (always do from perspective of home team)
   for xi_testing_row, actual_spread in zip(x_testing_row, y_testing_row):
     input_data = [ float(val) for val in xi_testing_row[5:]]
 
+<<<<<<< HEAD
+    predicted_spread = best_predictor.predict(input_data)
+=======
     predicted_spread = nn_classifier.predict(input_data)
+>>>>>>> d86eddb2d62b8fc162704cfa02f58ab633794d21
 
     date = xi_testing_row[0]
     away_team = xi_testing_row[1]
