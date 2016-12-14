@@ -371,78 +371,95 @@ We compared both our best linear classifier as well as our best neural network r
   \caption{Comparison with other betting authorities}
 \end{table}
 
-
-\section{Making predictions on future data}
-In addition to evaluating our classifiers against historical data from previous seasons, we additionally explored evaluation against future games/spreads. Practically, this would be the context in which we would use our classifier to predict the results and spreads of matchups which have not yet taken place. The input to the classifier is the running averages for the features so far in the season, and the output is either the predicted win/loss or the predicted spread on the matchup.
-
-We trained both our linear classifier as well as our neural network classifier on three seasons of past data and ran them on a few games that were occurring in the future. From this we were able to more realistically compare our win/loss predictions with the actual outcomes of current games and our spread predictions with other betting authorities' spreads and the actual spreads. Of the six games that took place on Monday 12/12/2016, the classifier was able to correctly predict the winner in five of the games. The average spread error on these games was 11.85 points with a standard deviation of 4.03 points. These results are given in Table 12, where the spread error represents the absolute value of the difference between the predicted spread and the actual spread. In comparison with our classifier and spreads, other betting authorities had an average spread error of 14.17 points with a standard deviation of 4.69 points.
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c | }
+      \hline
+                                & Correct win/loss     & Spread error  \\ \hline
+      CHA @ IND       & Correct              & 12.54    \\ \hline
+      MIL @ TOR       & Correct              & 14.64    \\ \hline
+      WSH @ MIA        & Wrong                & 11.30     \\ \hline
+      BKN @ HOU        & Correct              & 7.82      \\ \hline
+      DEN @ DAL           & Correct              & 18.40    \\ \hline
+      POR @ LAC  & Correct              & 6.39    \\ \hline
+    \end{tabular}
+  \end{center}
+  \caption{LC Performance on 12/12/2016 games}
+\end{table}
 
 \begin{table}
   \begin{center}
     \begin{tabular}{ | c | c | c | }
       \hline
                                 & Correct win/loss     & Spread error  \\ \hline
-      Charlotte @ Indiana       & Correct              & 12.54    \\ \hline
-      Milwaukee @ Toronto       & Correct              & 14.64    \\ \hline
-      Washington @ Miami        & Wrong                & 11.30     \\ \hline
-      Brooklyn @ Houston        & Correct              & 7.82      \\ \hline
-      Denver @ Dallas           & Correct              & 18.40    \\ \hline
-      Portland @ L.A. Clippers  & Correct              & 6.39    \\ \hline
+      CHA @ IND       & Correct              & 11.83    \\ \hline
+      MIL @ TOR       & Correct              & 14.29    \\ \hline
+      WSH @ MIA        & Wrong                & 12.52     \\ \hline
+      BKN @ HOU        & Correct              & 7.58      \\ \hline
+      DEN @ DAL           & Correct              & 19.83    \\ \hline
+      POR @ LAC  & Correct              & 6.98    \\ \hline
     \end{tabular}
   \end{center}
-  \caption{Performance on 12/12/2016 games}
+  \caption{NN Performance on 12/12/2016 games}
 \end{table}
 
+\section{Making predictions on future data}
+In addition to evaluating our classifiers against historical data from previous seasons, we additionally explored evaluation against future games/spreads. Practically, this would be the context in which we would use our classifier to predict the results and spreads of matchups which have not yet taken place. The input to the classifier is the running averages for the features so far in the season, and the output is either the predicted win/loss or the predicted spread on the matchup.
+
+We trained both our linear classifier as well as our neural network classifier on three seasons of past data and ran them on a few games that were occurring in the future. From this we were able to more realistically compare our win/loss predictions with the actual outcomes of current games and our spread predictions with other betting authorities' spreads and the actual spreads. Of the six games that took place on Monday 12/12/2016, both classifiers was able to correctly predict the winner in five of the games. The average spread error for the linear classifier on these games was 11.85 points with a standard deviation of 4.03 points. The average spread error for the neural network on these games was 12.17 points with a standard deviation of 4.08 points. These results are given in Table 12, where the spread error represents the absolute value of the difference between the predicted spread and the actual spread. In comparison with our classifier and spreads, other betting authorities had an average spread error of 14.17 points with a standard deviation of 4.69 points.
 
 \begin{table}
   \begin{center}
     \begin{tabular}{ | c | c | c | c | c | }
       \hline
                                 & Predicted     & Other  & Actual & Win?  \\ \hline
-      Charlotte @ Indiana       & -3.45         & +1.5   & -16    & Yes   \\ \hline
-      Milwaukee @ Toronto       & -7.36         & -8     & -22    & No   \\ \hline
-      Washington @ Miami        & +0.30         & +1.5   & -11    & Yes    \\ \hline
-      Brooklyn @ Houston        & -11.8         & -13.5  & -4     & Yes   \\ \hline
-      Denver @ Dallas           & -1.60         & +2.5   & -20    & Yes   \\ \hline
-      Portland @ L.A. Clippers  & -7.39         & -10    & -1     & Yes   \\ \hline
+      CHA @ IND       & -3.45         & +1.5   & -16    & Yes   \\ \hline
+      MIL @ TOR       & -7.36         & -8     & -22    & No   \\ \hline
+      WSH @ MIA        & +0.30         & +1.5   & -11    & Yes    \\ \hline
+      BKN @ HOU        & -11.8         & -13.5  & -4     & Yes   \\ \hline
+      DEN @ DAL           & -1.60         & +2.5   & -20    & Yes   \\ \hline
+      POR @ LAC  & -7.39         & -10    & -1     & Yes   \\ \hline
     \end{tabular}
   \end{center}
   \caption{Spreads on 12/12/2016 games}
 \end{table}
 
+When comparing our spreads with that of other betting authorities, we found that our linear classifier would have bet on the winning side of the spread in five of the six games and our neural network predictor would have bet on the winning side of the spread in four of the six games while not participating in one of the games. This is illustrated in Tables 16 and 17 which compares the predicted spreads, the other (betting authority's) spread, and the actual spread. These spreads are all given from the perspective of the home team, in which a negative spread indicates that the home team is favored to win by the given number of points. From this data, we can see that the spreads produced by the linear classifier would have led us to bet on the winning side of the betting authority's spreads in all of the games on Monday 12/12/2016 except for the matchup between Milwaukee Bucks and Toronto Raptors. This is indicated in the "Win?" column of the table.
+
 \begin{table}
   \begin{center}
     \begin{tabular}{ | c | c | c | c | c | }
       \hline
                                 & Predicted     & Other  & Actual & Win?  \\ \hline
-      Charlotte @ Indiana       & -4.17         & +1.5   & -16    & Yes   \\ \hline
-      Milwaukee @ Toronto       & -7.71         & -8     & -22    & ---   \\ \hline
-      Washington @ Miami        & +1.52         & +1.5   & -11    & No    \\ \hline
-      Brooklyn @ Houston        & -11.58         & -13.5  & -4     & Yes   \\ \hline
-      Denver @ Dallas           & -0.177         & +2.5   & -20    & Yes   \\ \hline
-      Portland @ L.A. Clippers  & -7.98         & -10    & -1     & Yes   \\ \hline
+      CHA @ IND       & -4.17         & +1.5   & -16    & Yes   \\ \hline
+      MIL @ TOR       & -7.71         & -8     & -22    & ---   \\ \hline
+      WSH @ MIA        & +1.52         & +1.5   & -11    & No    \\ \hline
+      BKN @ HOU        & -11.58         & -13.5  & -4     & Yes   \\ \hline
+      DEN @ DAL           & -0.177         & +2.5   & -20    & Yes   \\ \hline
+      POR @ LAC  & -7.98         & -10    & -1     & Yes   \\ \hline
     \end{tabular}
   \end{center}
-  \caption{Performance on 12/12/2016 games}
+  \caption{NN Performance on 12/12/2016 games}
 \end{table}
 
 When comparing our spreads with that of other betting authorities, we found that our classifier would have bet on the winning side of the spread in five of the six games. This is illustrated in Table 13 which compares the predicted spread, the other (betting authority's) spread, and the actual spread. These spreads are all given from the perspective of the home team, in which a negative spread indicates that the home team is favored to win by the given number of points. From this data, we can see that the spreads produced by the classifier would have led us to bet on the winning side of the betting authority's spreads in all of the games on Monday 12/12/2016 except for the matchup between Milwaukee Bucks and Toronto Raptors. This is indicated in the "Win?" column of the table.
 
 When comparing our spreads with that of other betting authorities, we found that our linear classifier would have bet on the winning side of the spread in five of the six games. This is illustrated in Table 14 which compares the predicted spread, the other (betting authority's) spread, and the actual spread. These spreads are all given from the perspective of the home team, in which a negative spread indicates that the home team is favored to win by the given number of points. From this data, we can see that the spreads produced by the classifier would have led us to bet on the winning side of the betting authority's spreads in all of the games on Monday 12/12/2016 except for the matchup between Milwaukee Bucks and Toronto Raptors. This is indicated in the "Win?" column of the table.
 
-Due to the arbitrage mentioned earlier in which you must bet more than \$100 in order to win \$100, we can also consider a slightly more conservative approach. More specifically, in the above model, we always bet on the spread regardless of the relationship between the predicted spread and the betting authority's spread. We could consider only betting if we are reasonably confident that our spread will beat the betting authority's spread. In other words, we could decide to bet only if our predicted spread is at least one point different from the betting authority's spread. If we were to adopt such an approach, then in the matchups for the games on Monday 12/12/2016, we would not have bet on one of the matchups and we would have won all of the spreads we bet on. These results are given in Table 15, in which the line for the Milwaukee and Toronto matchup in the conservative approach indicates that we would not have bet on that matchup.
+Due to the arbitrage mentioned earlier in which you must bet more than \$100 in order to win \$100, we can also consider a slightly more conservative approach. More specifically, in the above model, we always bet on the spread regardless of the relationship between the predicted spread and the betting authority's spread. We could consider only betting if we are reasonably confident that our spread will beat the betting authority's spread. In other words, we could decide to bet only if our predicted spread is at least one point different from the betting authority's spread. If we were to adopt such an approach, then in the matchups for the games on Monday 12/12/2016, we would not have bet on one of the matchups and we would have won all of the spreads we bet on using the linear classifier while we would not have bet on two of the matchups and we would have won all of the spreads we bet on using the neural network. These results are given in Table 15.
+
 
 \begin{table}
   \begin{center}
     \begin{tabular}{ | c | c | c | c | c | }
       \hline
                                 & Regular      & Conservative  \\ \hline
-      Charlotte @ Indiana       & Yes              & Yes   \\ \hline
-      Milwaukee @ Toronto       & No               & ---   \\ \hline
-      Washington @ Miami        & Yes              & Yes    \\ \hline
-      Brooklyn @ Houston        & Yes              & Yes   \\ \hline
-      Denver @ Dallas           & Yes              & Yes   \\ \hline
-      Portland @ L.A. Clippers  & Yes              & Yes   \\ \hline
+      CHA @ IND       & Yes              & Yes   \\ \hline
+      MIL @ TOR       & No               & ---   \\ \hline
+      WSH @ MIA        & Yes              & Yes    \\ \hline
+      BKN @ HOU        & Yes              & Yes   \\ \hline
+      DEN @ DAL           & Yes              & Yes   \\ \hline
+      POR @ LAC  & Yes              & Yes   \\ \hline
     \end{tabular}
   \end{center}
   \caption{Comparison of different betting approaches}
@@ -453,12 +470,12 @@ Due to the arbitrage mentioned earlier in which you must bet more than \$100 in 
     \begin{tabular}{ | c | c | c | c | c | }
       \hline
                                 & Regular      & Conservative  \\ \hline
-      Charlotte @ Indiana       & Yes              & Yes   \\ \hline
-      Milwaukee @ Toronto       & ---               & ---   \\ \hline
-      Washington @ Miami        & No              & ---    \\ \hline
-      Brooklyn @ Houston        & Yes              & Yes   \\ \hline
-      Denver @ Dallas           & Yes              & Yes   \\ \hline
-      Portland @ L.A. Clippers  & Yes              & Yes   \\ \hline
+      CHA @ IND       & Yes              & Yes   \\ \hline
+      MIL @ TOR       & ---               & ---   \\ \hline
+      WSH @ MIA        & No              & ---    \\ \hline
+      BKN @ HOU        & Yes              & Yes   \\ \hline
+      DEN @ DAL           & Yes              & Yes   \\ \hline
+      POR @ LAC  & Yes              & Yes   \\ \hline
     \end{tabular}
   \end{center}
   \caption{Comparison of different betting approaches}
@@ -466,7 +483,7 @@ Due to the arbitrage mentioned earlier in which you must bet more than \$100 in 
 
 Interestingly, we found that many of the other betting authorities had very similar spreads with only more noticeable deviations seen in the amount of money needed to bet in order to win \$100. Because we are not considering how to place money when deciding on how to bet, our performance across the professional betting authorities was largely fairly consistent.
 
-The fairly significantly different results between evaluating our classifier against other betting authorities on historical spreads and more current spreads are particularly interesting to us. This could be partially attributed to the fact that in the case of evaluating our classifier on current spreads, we train with all three seasons of data available to us, whereas when we test against historical data, we train on one season of data and set aside the other two seasons of data for validation and testing. Thus, this dramatic improvement in performance could be due to an increased number of training sample points. Either way however, such performance of our classifier makes us fairly confident in our ability to predict spreads when compared with professional betting authorities.
+The fairly significantly different results between evaluating our classifiers against other betting authorities on historical spreads and more current spreads are particularly interesting to us. This could be partially attributed to the fact that in the case of evaluating our classifiers on current spreads, we train with all three seasons of data available to us, whereas when we test against historical data, we train on one season of data and set aside the other two seasons of data for validation and testing. Thus, this dramatic improvement in performance could be due to an increased number of training sample points. Either way however, such performance of our classifier makes us fairly confident in our ability to predict spreads when compared with professional betting authorities.
 
 One matchup on Monday 12/12/2016 which is of particular interest here is the one between the Charlotte Hornets and Indiana Pacers. So far in the season, the Charlotte Hornets had 14-10 record whereas the Indiana Pacers had 12-12 record. Based on win rate alone, one might think that the Hornets would have had the edge in this game. If we look at the home court records however, we can see that the Pacers, who were playing at home, had a home court record of 9-4 while the Hornets had a road record of 6-4. Thus, by considering the home court advantage, we were able to correctly predict that Indiana Pacers would win and therefore hypothetically bet on the winning side of professional betting authority spreads.
 
