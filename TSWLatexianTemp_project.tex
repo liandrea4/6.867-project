@@ -127,7 +127,7 @@ These statistics were therefore plotted over time throughout the season in order
 
 \begin{figure}[width=\linewidth]
 \centering
-  \includegraphics[width=1\linewidth]{code/figures/win_rate.png}
+  \includegraphics[width=0.8\linewidth]{code/figures/win_rate.png}
 \caption{Win rate over time}
 \end{figure}
 
@@ -157,7 +157,7 @@ These results for the performance of the linear classifier are summarized in Tab
       \hline
                       & Win/Lose Accuracy & Spread Error  \\ \hline
       Basic features  & 63.3\%            & 10.07         \\ \hline
-      Extra features  & 66.9\%            & 13.60         \\ \hline
+      Full features  & 66.9\%            & 13.60         \\ \hline
     \end{tabular}
   \end{center}
   \caption{Classifier performance on test dataset}
@@ -172,7 +172,7 @@ Similar results were found when we used a polynomial basis and allowed the degre
     \begin{tabular}{ | c | c | c | c | c | }
       \hline
       \textbf{M=1}    & \textbf{M=2}    & \textbf{M=3}     & \textbf{M=4}     & \textbf{M=5}      \\ \hline
-      10.15  & 11.35  & 11.013  & 12.40   & 11.32    \\ \hline
+      10.15  & 11.35  & 11.013  & 12.40   & 11.32    \\ \hline \hline
       \textbf{M=6}    & \textbf{M=7}    & \textbf{M=8}     & \textbf{M=9}     & \textbf{M=10}     \\ \hline
       12.05  & 33.26  & 33.56   & 17.11   & 150.23   \\ \hline
     \end{tabular}
@@ -255,10 +255,10 @@ The ReLu function was the activation function of choice for the hidden layers be
 As mentioned previously, predicting the winner of a particular NBA game boils down to a classification problem.
 
 \subsubsection{Training}
-The input (X) to the multi-layer perceptron (MLP) classifier is a vector containing features for the two teams that are playing each other. At first, we utilized only the basic features but then we also incorporated the advanced features to see if we could improve performance. The Y values given to the classifier were either 1 (if the home team wins) or 0. Additionally, we tested our classifier on both 1 season of data (2008-2009) as well as 3 seasons of data (2008-2011). We also tested both normalized and un-normalized data and found that normalization had no impact on the ultimate accuracy of the classifiers.
+The input (X) to the multi-layer perceptron (MLP) classifier is a vector containing features for the two teams that are playing each other. At first, we utilized only the basic features but then we also incorporated the advanced features as well as just the win rate featurs to see if we could improve performance. The Y values given to the classifier were either 1 (if the home team wins) or 0. Additionally, we tested our classifier on both 1 season of data (2008-2009) as well as 3 seasons of data (2008-2011). We also tested both normalized and un-normalized data and found that normalization had no impact on the ultimate accuracy of the classifiers.
 
 \subsubsection{Validation}
-The purpose of validation is to determine the optimum hyperparameters for our neural network, which in our case is the regularization parameter as well as the size of the hidden layers. Through early testing/ experimentation it was discovered that hidden layers containing around 5-20 neurons performed the best so we incorporated that in creating our set of potential hidden layer sizes. Table 7 shows validation results for 3 seasons of data using both both basic and advanced features. The column headers are the hidden layer sizes (the $i^{th}$ number represents the number of hidden neurons in the $i^{th}$ hidden layer. The row headers are the various regularization coefficients we tried. Table 8 shows the aggregated validation results for classification.
+The purpose of validation is to determine the optimum hyperparameters for our neural network, which in our case is the regularization parameter as well as the size of the hidden layers. Through early testing/ experimentation it was discovered that hidden layers containing around 5-20 neurons performed the best so we incorporated that in creating our set of potential hidden layer sizes. Table 7 shows validation results for 3 seasons of data using both both basic and advanced features. The column headers are the hidden layer sizes (the $i^{th}$ number represents the number of hidden neurons in the $i^{th}$ hidden layer. The row headers are the various regularization coefficients we tried. We can see that using a regularization parameter of 0.0001 with one hidden layer consisting of 10 neurons yielded the best results Table 8 shows the aggregated validation results for classification. As a general trend, we see that the validation accuracy was almost always better with 3 seasons of data.
 
 \begin{table}
   \begin{center}
@@ -266,42 +266,53 @@ The purpose of validation is to determine the optimum hyperparameters for our ne
       \hline
             &             	(5,) & 	(10,) & 	(5,5) &  	(10,10) & 	(10,20,10) & 	(5,10,10,5)  \\ \hline
 	0  &     	0.684 & 	0.671&	0.665&	0.683&	0.654&		0.671	    \\ \hline
-	0.0001 &   0.589 &     \textbf{0.687}&	0.671&	0.673&	0.659&		0.669	    \\ \hline	
-	0.01  &    	0.670 &     0.665&	0.589&	0.673&	0.653&		0.669	    \\ \hline	
+	0.0001 &   0.589 &     \textbf{0.687}&	0.671&	0.673&	0.659&		0.669	    \\ \hline
+	0.01  &    	0.670 &     0.665&	0.589&	0.673&	0.653&		0.669	    \\ \hline
 	0.1	&	0.677&	0.672&	0.589&	0.676&	0.645&		0.680	    \\ \hline
 	1&		0.675&	0.673&	0.665&	0.673&	0.669&		0.589	    \\ \hline
-	
+
     \end{tabular}
   \end{center}
   \caption{Validation results for 2008-2011}
 \end{table}
 
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c | c |}
+      \hline
+            &            	Basic features & 	Full features &  Win rate features  \\ \hline
+	2008  &     	0.665 & 	0.679 & 0.672    \\ \hline
+	2008-2011 &   0.679&  0.687 & 0.680  \\ \hline
 
+
+    \end{tabular}
+  \end{center}
+  \caption{Aggregate validation results}
+\end{table}
 
 \subsubsection{Testing}
 
-After finding the optimal architecture for our MLP classifier in each situation we proceeded to test the classifier on the testing data. The testing accuracies are depicted in table 9.
+After finding the optimal architecture for our MLP classifier in each situation we proceeded to test the classifier on the testing data. The testing accuracies are depicted in Table 9.
 
 \begin{table}
   \begin{center}
-    \begin{tabular}{ | c | c | c |}
+    \begin{tabular}{ | c | c | c | c |}
       \hline
-            &            	basic features & 	full features \\ \hline
-	2008 season  &     	0.675 & 	0.672    \\ \hline
-	2008-2011 seasons &   0.682&  0.693 \\ \hline	
 
-	
+            &            	Basic features & 	Full features & Win rate features   \\ \hline
+	2008  &     	0.660 & 	0.672  & 0.687  \\ \hline
+	2008-2011 &   0.671&  0.693 & 0.695\\ \hline
+
     \end{tabular}
   \end{center}
   \caption{Aggregate testing results}
 \end{table}
 
 
-As you can see, through using a neural network approach we were able to derive slightly better results for classification compared to the linear regression approach. Additionally, we were able to get accuracies that were a bit higher than the previous ones found in literature (68 \%). 
-
+We were able to get accuracies that were a bit higher than the previous ones found in literature (68 \%). Even though using win rate features alone performed poorer than using the complete set of features during validation, it actually appears that using purely win rate features yielded a slightly higher accuracy during testing.
 
 \subsubsection{Overfitting}
-When experimenting with various architectures for the neural network it was discovered that there was an interesting tradeoff between hidden layer complexity and testing accuracy, which highly resembled overfitting.
+When experimenting with various architectures for the neural network it was discovered that there was an interesting tradeoff between hidden layer complexity and testing accuracy, which highly resembled overfitting. We found that as we increased the number of hidden neurons in each hidden layer, we could increase training accuracy substantially but this ultimately resulted in extremely poor validation and testing accuracy.
 
 \subsection{Predicting spreads}
 As mentioned previously, predicting the spread of a particular NBA game boils down to a regression problem.
@@ -311,24 +322,25 @@ The input (X) to the multi-layer perceptron (MLP) regressor is the exact same as
 
 \subsubsection{Validation}
 
-When finding the optimal architecture for our MLP regressor we used two different approaches for validation, which optimized for different things. The first approach involved optimizing the neural network to predict spreads that minimized the average prediction error for each game. For example, if our regressor predicts that the home team would win be 4 points, but in fact the away team wins by 2 points that results in an error of 6 points for that game. The second approach was a more direct approach towards our ultimate goal of beating the spread. It involves optimizing the neural network to specifically beat the spread. For example, if the spread favors the home team by 4 points, and our predictor predicts the home team wins by 6 points , and the actual home team wins by 8 points then this is considered "beating the spread". Ultimately, we will choose the architecture that has the highest "beating the spread" rate. Table 10 shows validation results (with approach 1) for 3 seasons of data using both both basic and advanced features. Table 11 shows the aggregated validation results for validation approach 1 while Table 12 shows the aggregated validation results for validation approach 2.
-
+When finding the optimal architecture for our MLP regressor we used two different approaches for validation, which optimized for different things. The first approach involved optimizing the neural network to predict spreads that minimized the average prediction error for each game. For example, if our regressor predicts that the home team would win be 4 points, but in fact the away team wins by 2 points that results in an error of 6 points for that game. The second approach was a more direct approach towards our ultimate goal of beating the spread. It involves optimizing the neural network to specifically beat the spread. For example, if the spread favors the home team by 4 points, and our predictor predicts the home team wins by 6 points , and the actual home team wins by 8 points then this is considered "beating the spread". Ultimately, we wanted to choose the architecture that has the highest "beating the spread" rate. Unfortunately, after experimenting a bit, we saw that there was absolutely no difference between the two validation approaches so we just resorted to the first one. Table 10 shows validation results (with approach 1) for 3 seasons of data using both both basic and advanced features. Table 11 shows the aggregated validation results for validation.
 \begin{table}
   \begin{center}
     \begin{tabular}{ | c | c | c | c |}
       \hline
+
             &             	\textbf{(5,)} & 	\textbf{(10,)} & 	\textbf{(5,5)}   	 \\ \hline
-	0  &     	10.54 & 	9.52&	9.55	  \\ \hline
-	0.0001 &   9.56 &     	9.49&	9.56 \\ \hline	
-	0.01  &    	9.55 &     	9.50& 	9.45    \\ \hline	
-	0.1	&	9.47&	9.55 &	9.50  \\ \hline
-	1	&	9.52 &	09.51&	 10.21\\ \hline
-		&	\textbf{(10,10)} & 	\textbf{(10,20,10)} & 	\textbf{(5,10,10,5)}  \\ \hline
-		0&	9.50&	\textbf{9.44}&	10.54	    \\ \hline
-		0.0001& 9.51&		9.51&	9.46	    \\ \hline	
-		0.01 & 9.51&	10.54&		9.46	    \\ \hline	
+	  0  &     	10.54 & 	9.52&	9.55	  \\ \hline
+	  0.0001 &   9.56 &     	9.49&	9.56 \\ \hline
+	  0.01  &    	9.55 &     	9.50& 	9.45    \\ \hline
+	  0.1	&	9.47&	9.55 &	9.50  \\ \hline
+	  1	&	9.52 &	09.51&	 10.21\\ \hline \hline
+		       &	\textbf{(10,10)} & 	\textbf{(10,20,10)} & 	\textbf{(5,10,10,5)}  \\ \hline
+		0      &	9.50&	\textbf{9.44}&	10.54	    \\ \hline
+		0.0001& 9.51&		9.51&	9.46	    \\ \hline
+		0.01 & 9.51&	10.54&		9.46	    \\ \hline
 		0.1 & 9.53&	9.50&		9.45	    \\ \hline
 		1 & 9.49&	9.58&		9.48	    \\ \hline
+
 
 
     \end{tabular}
@@ -338,30 +350,35 @@ When finding the optimal architecture for our MLP regressor we used two differen
 
 \begin{table}
   \begin{center}
-    \begin{tabular}{ | c | c | c |}
+    \begin{tabular}{ | c | c | c | c |}
       \hline
-            &            	basic features & 	full features \\ \hline
-	2008 season  &     	9.84 & 	9.55    \\ \hline
-	2008-2011 seasons &   9.60&  9.44 \\ \hline	
 
-	
+            &            	Basic features & 	Full features & Win rate features \\ \hline
+	2008  &     	9.84 & 	9.55 & 9.48    \\ \hline
+	2008-2011 &   9.60&  9.44 & 9.21 \\ \hline
+
+
     \end{tabular}
   \end{center}
   \caption{Aggregate validation results (approach 1)}
 \end{table}
 
+We see here that using the win rate features with the 3 seasons of data yielded the best validation results. Interestingly, enough the architecture that performed the best in almost all cases consisted of a regularization value of $0.0001$ and a hidden layer size of (10,20,10).
+
 \subsubsection{Testing}
-After finding the optimal architecture for our MLP regressor in each situation we proceeded to test the regressor on the testing data. The testing results with regards to minimizing spread error is shown in Table 13. One of the interesting findings from these validation and testing results is that the predictor almost always does better with more data as well as more features. With the additional data it is quite intuitive why this is the case. With the additional features, our hypothesis is that the home court marginals might be playing a large impact in the predictions.  
+
+After finding the optimal architecture for our MLP regressor in each situation we proceeded to test the regressor on the testing data. The testing results are shown in Table 13. One of the interesting findings from these validation and testing results is that the predictor almost always does better with more data and that using either full features or win rate features consistently beats using basic features. With the additional data it is quite intuitive why this is the case. Regarding why full and win rate features outperform basic features our hypothesis is that the home court component plays a large part in the predictions because home court does not show up in the basic features at all.
+
 
 \begin{table}
   \begin{center}
-    \begin{tabular}{ | c | c | c |}
+    \begin{tabular}{ | c | c | c | c |}
       \hline
-            &            	basic features & 	full features \\ \hline
-	2008 season  &     	10.32 & 	10.2    \\ \hline
-	2008-2011 seasons &  10.09&  9.92 \\ \hline	
 
-	
+            &            	Basic features & 	Full features & Win rate features \\ \hline
+	2008  &     	10.32 & 	10.2  & 9.59   \\ \hline
+	2008-2011 &  10.09&  9.92 & 9.14 \\ \hline
+
     \end{tabular}
   \end{center}
   \caption{Aggregate testing results (approach 1)}
@@ -370,8 +387,8 @@ After finding the optimal architecture for our MLP regressor in each situation w
 \section{Evaluation with historical data}
 In addition to calculating and analyzing the average spread error, we also compared our spreads predictions against other betting authorities' spreads. After creating a scaper which scraped the spreads posted by other betting authorities, we were able to determine the rate at which our spread would have beaten the betting authority's spread. This would occur in two scenarios: (1) if our predicted spread indicates that the winning team would have won by more than the other betting authority's predicted spread (e.g. if our spread is -8 and the other betting authority's spread is -5 on a game in which the favored team won by more than five points), or (2) if the predicted spread indicates that the winning team would have won by less or lost compared with the other betting authority's predicted spread (e.g. if our spread is +2 and the other betting authority's spread is -5 on a game in which the favored team lost or won by less than five points).
 
-\subsection{Linear classifier}
-We compared our best linear classifier (three seasons of data with only the four win rate features) against the spreads predicted by other betting authorities. We found that the spreads predicted by our linear classifier performed slightly worse than the spreads published by betting authorities. These results are summarized in Table 8, where win rate refers to the percentage of games our spread would have beaten the given betting authority's spread. Overall, the other betting authorities had an average spread error of approximately 8.5 points and would have beaten our spread a little more than 50\% of the time. This is compared with our average spread error of 9.14 points for a linear classifier.
+\subsection{Comparing to betting authorities}
+We compared both our best linear classifier as well as our best neural network regressor (only the four win rate features) against the spreads predicted by other betting authorities. We found that the spreads predicted by our linear classifier performed slightly worse than the spreads published by betting authorities in both cases. These results are summarized in Table 14, where win rate refers to the percentage of games our spread would have beaten the given betting authority's spread. Overall, the other betting authorities had an average spread error of approximately 8.5 points and would have beaten our spread a little more than 50\% of the time. This is compared with our average spread error of 9.14 points for both our linear classifier and neural network regressor.
 
 \begin{table}
   \begin{center}
@@ -379,7 +396,7 @@ We compared our best linear classifier (three seasons of data with only the four
       \hline
                        & Spread Error      &LC  Win rate &NN Win rate \\ \hline
        A      & 8.70              & 48.2\% &47.2\%   \\ \hline
-      B      & 8.65              & 46.6\%  &46.5\%  \\ \hline
+      B      & 8.65              & 46.6\%  &46.9\%  \\ \hline
       C      & 8.67              & 48\%      &47.3\%	\\ \hline
 	D      & 8.67              & 47.8\%    &46.9\%\\ \hline
     \end{tabular}
@@ -387,14 +404,12 @@ We compared our best linear classifier (three seasons of data with only the four
   \caption{Comparison with other betting authorities}
 \end{table}
 
-\subsection{Neural networks}
 
 
-\section{Evaluation with current data}
-In addition to evaluating our classifiers against historical data from previous seasons, we additionally explored evaluation against data from the current season. Practically, this would be the context in which we would use our classifier to predict the results and spreads of matchups which have not yet taken place. The input to the classifier is the running averages for the features so far in the season, and the output is either the predicted win/loss or the predicted spread on the matchup.
+\section{Making predictions on future data}
+In addition to evaluating our classifiers against historical data from previous seasons, we additionally explored evaluation against future games/ spreads. Practically, this would be the context in which we would use our classifier to predict the results and spreads of matchups which have not yet taken place. The input to the classifier is the running averages for the features so far in the season, and the output is either the predicted win/loss or the predicted spread on the matchup.
 
-\subsection{Linear classifier}
-We trained our linear classifier on three seasons of past data and ran the classifier on some recent games this season. From this we were able to more realistically compare our win/loss predictions with the actual outcomes of current games and our spread predictions with other betting authorities' spreads and the actual spreads. Of the six games that took place on Monday 12/12/2016, the classifier was able to correctly predict the winner in five of the games. The average spread error on these games was 11.85 points with a standard deviation of 4.03 points. These results are given in Table 9, where the spread error represents the absolute value of the difference between the predicted spread and the actual spread. In comparison with our classifier and spreads, other betting authorities had an average spread error of 14.17 points with a standard deviation of 4.69 points.
+We trained both our linear classifier as well as our neural network classifier on three seasons of past data and ran them on a few games that were occurring in the future. From this we were able to more realistically compare our win/loss predictions with the actual outcomes of current games and our spread predictions with other betting authorities' spreads and the actual spreads. Of the six games that took place on Monday 12/12/2016, both classifiers was able to correctly predict the winner in five of the games. The average spread error for the linear classifier on these games was 11.85 points with a standard deviation of 4.03 points. The average spread error for the neural network on these games was 12.17 points with a standard deviation of 4.08 points. These results are given in Table 15, where the spread error represents the absolute value of the difference between the predicted spread and the actual spread. In comparison with our classifier and spreads, other betting authorities had an average spread error of 14.17 points with a standard deviation of 4.69 points.
 
 \begin{table}
   \begin{center}
@@ -409,10 +424,28 @@ We trained our linear classifier on three seasons of past data and ran the class
       Portland @ L.A. Clippers  & Correct              & 6.39    \\ \hline
     \end{tabular}
   \end{center}
-  \caption{Performance on 12/12/2016 games}
+  \caption{LC Performance on 12/12/2016 games}
 \end{table}
 
-When comparing our spreads with that of other betting authorities, we found that our classifier would have bet on the winning side of the spread in five of the six games. This is illustrated in Table 10 which compares the predicted spread, the other (betting authority's) spread, and the actual spread. These spreads are all given from the perspective of the home team, in which a negative spread indicates that the home team is favored to win by the given number of points. From this data, we can see that the spreads produced by the classifier would have led us to bet on the winning side of the betting authority's spreads in all of the games on Monday 12/12/2016 except for the matchup between Milwaukee Bucks and Toronto Raptors. This is indicated in the "Win?" column of the table.
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c | }
+      \hline
+                                & Correct win/loss     & Spread error  \\ \hline
+      Charlotte @ Indiana       & Correct              & 11.83    \\ \hline
+      Milwaukee @ Toronto       & Correct              & 14.29    \\ \hline
+      Washington @ Miami        & Wrong                & 12.52     \\ \hline
+      Brooklyn @ Houston        & Correct              & 7.58      \\ \hline
+      Denver @ Dallas           & Correct              & 19.83    \\ \hline
+      Portland @ L.A. Clippers  & Correct              & 6.98    \\ \hline
+    \end{tabular}
+  \end{center}
+  \caption{NN Performance on 12/12/2016 games}
+\end{table}
+
+
+
+When comparing our spreads with that of other betting authorities, we found that our linear classifier would have bet on the winning side of the spread in five of the six games and our neural network predictor would have bet on the winning side of the spread in four of the six games while not participating in one of the games. This is illustrated in Tables 16 and 17 which compares the predicted spreads, the other (betting authority's) spread, and the actual spread. These spreads are all given from the perspective of the home team, in which a negative spread indicates that the home team is favored to win by the given number of points. From this data, we can see that the spreads produced by the linear classifier would have led us to bet on the winning side of the betting authority's spreads in all of the games on Monday 12/12/2016 except for the matchup between Milwaukee Bucks and Toronto Raptors. This is indicated in the "Win?" column of the table.
 
 
 \begin{table}
@@ -428,10 +461,29 @@ When comparing our spreads with that of other betting authorities, we found that
       Portland @ L.A. Clippers  & -7.39         & -10    & -1     & Yes   \\ \hline
     \end{tabular}
   \end{center}
-  \caption{Performance on 12/12/2016 games}
+  \caption{Spreads on 12/12/2016 games}
 \end{table}
 
-Due to the arbitrage mentioned earlier in which you must bet more than \$100 in order to win \$100, we can also consider a slightly more conservative approach. More specifically, in the above model, we always bet on the spread regardless of the relationship between the predicted spread and the betting authority's spread. We could consider only betting if we are reasonably confident that our spread will beat the betting authority's spread. In other words, we could decide to bet only if our predicted spread is at least one point different from the betting authority's spread. If we were to adopt such an approach, then in the matchups for the games on Monday 12/12/2016, we would not have bet on one of the matchups and we would have won all of the spreads we bet on. These results are given in Table 11, in which the line for the Milwaukee and Toronto matchup in the conservative approach indicates that we would not have bet on that matchup.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c | c | c | }
+      \hline
+                                & Predicted     & Other  & Actual & Win?  \\ \hline
+      Charlotte @ Indiana       & -4.17         & +1.5   & -16    & Yes   \\ \hline
+      Milwaukee @ Toronto       & -7.71         & -8     & -22    & ---   \\ \hline
+      Washington @ Miami        & +1.52         & +1.5   & -11    & No    \\ \hline
+      Brooklyn @ Houston        & -11.58         & -13.5  & -4     & Yes   \\ \hline
+      Denver @ Dallas           & -0.177         & +2.5   & -20    & Yes   \\ \hline
+      Portland @ L.A. Clippers  & -7.98         & -10    & -1     & Yes   \\ \hline
+    \end{tabular}
+  \end{center}
+  \caption{NN Performance on 12/12/2016 games}
+\end{table}
+
+
+
+Due to the arbitrage mentioned earlier in which you must bet more than \$100 in order to win \$100, we can also consider a slightly more conservative approach. More specifically, in the above model, we always bet on the spread regardless of the relationship between the predicted spread and the betting authority's spread. We could consider only betting if we are reasonably confident that our spread will beat the betting authority's spread. In other words, we could decide to bet only if our predicted spread is at least one point different from the betting authority's spread. If we were to adopt such an approach, then in the matchups for the games on Monday 12/12/2016, we would not have bet on one of the matchups and we would have won all of the spreads we bet on using the linear classifier while we would not have bet on two of the matchups and we would have won all of the spreads we bet on using the neural network. These results are given in Table 17.
 
 \begin{table}
   \begin{center}
@@ -449,10 +501,25 @@ Due to the arbitrage mentioned earlier in which you must bet more than \$100 in 
   \caption{Comparison of different betting approaches}
 \end{table}
 
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c | c | c | }
+      \hline
+                                & Regular      & Conservative  \\ \hline
+      Charlotte @ Indiana       & Yes              & Yes   \\ \hline
+      Milwaukee @ Toronto       & ---               & ---   \\ \hline
+      Washington @ Miami        & No              & ---    \\ \hline
+      Brooklyn @ Houston        & Yes              & Yes   \\ \hline
+      Denver @ Dallas           & Yes              & Yes   \\ \hline
+      Portland @ L.A. Clippers  & Yes              & Yes   \\ \hline
+    \end{tabular}
+  \end{center}
+  \caption{Comparison of different betting approaches}
+\end{table}
 
 Interestingly, we found that many of the other betting authorities had very similar spreads with only more noticeable deviations seen in the amount of money needed to bet in order to win \$100. Because we are not considering how to place money when deciding on how to bet, our performance across the professional betting authorities was largely fairly consistent.
 
-The fairly significantly different results between evaluating our classifier against other betting authorities on historical spreads and more current spreads are particularly interesting to us. This could be partially attributed to the fact that in the case of evaluating our classifier on current spreads, we train with all three seasons of data available to us, whereas when we test against historical data, we train on one season of data and set aside the other two seasons of data for validation and testing. Thus, this dramatic improvement in performance could be due to an increased number of training sample points. Either way however, such performance of our classifier makes us fairly confident in our ability to predict spreads when compared with professional betting authorities.
+The fairly significantly different results between evaluating our classifiers against other betting authorities on historical spreads and more current spreads are particularly interesting to us. This could be partially attributed to the fact that in the case of evaluating our classifiers on current spreads, we train with all three seasons of data available to us, whereas when we test against historical data, we train on one season of data and set aside the other two seasons of data for validation and testing. Thus, this dramatic improvement in performance could be due to an increased number of training sample points. Either way however, such performance of our classifier makes us fairly confident in our ability to predict spreads when compared with professional betting authorities.
 
 One matchup on Monday 12/12/2016 which is of particular interest here is the one between the Charlotte Hornets and Indiana Pacers. So far in the season, the Charlotte Hornets had 14-10 record whereas the Indiana Pacers had 12-12 record. Based on win rate alone, one might think that the Hornets would have had the edge in this game. If we look at the home court records however, we can see that the Pacers, who were playing at home, had a home court record of 9-4 while the Hornets had a road record of 6-4. Thus, by considering the home court advantage, we were able to correctly predict that Indiana Pacers would win and therefore hypothetically bet on the winning side of professional betting authority spreads.
 
@@ -464,9 +531,11 @@ Some drawbacks to the algorithm presented here include the fact that we do not e
 
 Future iterations of this algorithm would explore the addition of features such as the number of assists, steals, blocks, turnovers, and fouls per game, as well as assist to turnover ratio and average player efficiency ratings.
 
+\section{Conclusion}
+In this report, we have explored the use of supervised machine learning techniques to predict win/loss and spreads on basketball matchups in the NBA. We primarily explored the use of linear classifiers and neural networks in our approach, where we explored various levels of regularization, architectures, features, and seasons of data. We found that overall the best polynomial basis classifier was a linear classifier which only took win rate features (home/away team win rate and home/away team home court win rate) into account. This classifier was able to achieve about 70\% accuracy in predicting win/loss and had an average spread error of 8.95 points when compared with the actual spread. We found that for the neural networks, classification of win/loss was best with greater regularization and fewer hidden layers (an optimal architecture of (10) and $\alpha = 0.1$), whereas regression was optimal with a smaller regularization term and more hidden layers (an optimal architecture of (10,20,10) and $\alpha = 0.0001$). Overall, we were unable to reliably beat the spreads published professional betting organizations when analyzing historical data. When examining game matchups from the current season however, based on our limited access to data, we found that our classifiers did indeed do a remarkable job of outperforming and winning against the professional spreads, especially when we adopted a more conservative approach.
 
 \section{Breakdown of individual work}
-The breakdown of work between the two members of the group largely followed that given in the original project proposal. Andrea and Tyson jointly worked on preliminary review of the current techniques and the state of the art. Following this, Tyson was primarily involved in the collection of game data from past seasons, and Andrea created the scraper to collect data on historical spreads put out by various betting organizations on previous games. Andrea explored preliminary models such as linear regression and regression with various basis functions, and Tyson chiefly explored a neural network approach . As discussed during the project proposal meeting, we decided not to implement a convolutional neural network for this problem, as the architecture did not fit the structure of the problem as closely. We each tested the models we worked on against data test sets, historical spreads, and games in the current season. We split the writing up of the report equally, where Andrea wrote part of the data collection, linear classifier, linear classifier evaluation, and potential sources of failure sections, and Tyson wrote up the introduction, part of the data collection, neural network, and neural network evaluation sections.
+The breakdown of work between the two members of the group largely followed that given in the original project proposal. Andrea and Tyson jointly worked on preliminary review of the current techniques and the state of the art. Following this, Tyson was primarily involved in the collection of game data from past seasons, and Andrea created the scraper to collect data on historical spreads put out by various betting organizations on previous games. Andrea explored preliminary models such as linear regression and regression with various basis functions, and Tyson chiefly explored a neural network approach. As discussed during the project proposal meeting, we decided not to implement a convolutional neural network for this problem, as the architecture did not fit the structure of the problem as closely. We each tested the models we worked on against data test sets, historical spreads, and games in the current season. We split the writing up of the report equally, where Andrea wrote part of the data collection, linear classifier, linear classifier evaluation, and potential sources of failure sections, and Tyson wrote up the introduction, part of the data collection, neural network, and neural network evaluation sections.
 
 
 \end{document}
