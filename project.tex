@@ -255,27 +255,57 @@ As mentioned previously, predicting the winner of a particular NBA game boils do
 The input (X) to the multi-layer perceptron (MLP) classifier is a vector containing features for the two teams that are playing each other. At first, we utilized only the basic features but then we also incorporated the advanced features to see if we could improve performance. The Y values given to the classifier were either 1 (if the home team wins) or 0. Additionally, we tested our classifier on both 1 season of data (2008-2009) as well as 3 seasons of data (2008-2011). We also tested both normalized and un-normalized data and found that normalization had no impact on the ultimate accuracy of the classifiers. 
 
 \subsubsection{Validation}
-The purpose of validation is to determine the optimum hyperparameters for our neural network, which in our case is the regularization parameter as well as the size of the hidden layers. Through early testing/ experimentation it was discovered that hidden layers containing around 5-20 neurons performed the best so we incorporated that in creating our set of potential hidden layer sizes. Table shows validation results for 3 seasons of data using both both basic and advanced features. Table shows the aggregated validation results for classification.
+The purpose of validation is to determine the optimum hyperparameters for our neural network, which in our case is the regularization parameter as well as the size of the hidden layers. Through early testing/ experimentation it was discovered that hidden layers containing around 5-20 neurons performed the best so we incorporated that in creating our set of potential hidden layer sizes. Table 7 shows validation results for 3 seasons of data using both both basic and advanced features. The column headers are the hidden layer sizes (the $i^{th}$ number represents the number of hidden neurons in the $i^{th}$ hidden layer. The row headers are the various regularization coefficients we tried. Table 8 shows the aggregated validation results for classification.
 
 \begin{table}
   \begin{center}
-    \begin{tabular}{ | c | c | c | c | c | c | }
+    \begin{tabular}{ | c | c | c | c | c | c | c |}
       \hline
-                         	(5,) & 	(10,) & 	(5,5) &  	(10,10) & 	(10,20,10) & 	(5,10,10,5)  \\ \hline
-	0       	            & 9.29         \\ \hline
-	0.0001      & 68.7\%            & 9.14         \\ \hline
-	0.01
-	0.1
-	1
+            &             	(5,) & 	(10,) & 	(5,5) &  	(10,10) & 	(10,20,10) & 	(5,10,10,5)  \\ \hline
+	0  &     	0.684 & 	0.671&	0.665&	0.683&	0.654&		0.671	    \\ \hline
+	0.0001 &   0.589 &     \textbf{0.687}&	0.671&	0.673&	0.659&		0.669	    \\ \hline	
+	0.01  &    	0.670 &     0.665&	0.589&	0.673&	0.653&		0.669	    \\ \hline	
+	0.1	&	0.677&	0.672&	0.589&	0.676&	0.645&		0.680	    \\ \hline
+	1&		0.675&	0.673&	0.665&	0.673&	0.669&		0.589	    \\ \hline
+	
     \end{tabular}
   \end{center}
   \caption{Validation results for 2008-2011}
 \end{table}
 
-\subsubsection{Testing}
-After finding the optimal architecture for our MLP classifier we proceeded to test this architecture on the testing data. We had the following testing accuracies.
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c |}
+      \hline
+            &            	basic features & 	full features \\ \hline
+	2008 season  &     	0.675 & 	0.704    \\ \hline
+	2008-2011 seasons &   0.653&  0.687 \\ \hline	
 
-As you can see, through using a neural network approach we were able to derive slightly better results for classification compared to the linear regression approach. Additionally, we were able to get accuracies that were a bit higher than the previous ones found in literature (68 \%). The next part of the testing included actually using our classifier to predict outcomes of future games. 
+	
+    \end{tabular}
+  \end{center}
+  \caption{Aggregate validation results}
+\end{table}
+
+\subsubsection{Testing}
+After finding the optimal architecture for our MLP classifier in each situation we proceeded to test the classifier on the testing data. The testing accuracies are depicted in table 9.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c |}
+      \hline
+            &            	basic features & 	full features \\ \hline
+	2008 season  &     	0.675 & 	0.672    \\ \hline
+	2008-2011 seasons &   0.682&  0.693 \\ \hline	
+
+	
+    \end{tabular}
+  \end{center}
+  \caption{Aggregate testing results}
+\end{table}
+
+
+As you can see, through using a neural network approach we were able to derive slightly better results for classification compared to the linear regression approach. Additionally, we were able to get accuracies that were a bit higher than the previous ones found in literature (68 \%). 
 
 \subsubsection{Overfitting}
 When experimenting with various architectures for the neural network it was discovered that there was an interesting tradeoff between hidden layer complexity and testing accuracy, which highly resembled overfitting. 
@@ -287,10 +317,54 @@ As mentioned previously, predicting the spread of a particular NBA game boils do
 The input (X) to the multi-layer perceptron (MLP) regressor is the exact same as the input to the classifier. The Y values, however, are now the actual realized spreads/ game outcomes (away team score - home team score). Just like for classification, we also tested our classifier on both 1 season of data as well as 3 seasons. Additionally, we also found that normalization had no impact on the performance of our predictor. 
 
 \subsubsection{Validation}
-When finding the optimal architecture for our MLP regressor we used two different approaches for validation, which optimized for different things. The first approach involved optimizing the neural network to predict spreads that minimized the average prediction error for each game. For example, if our regressor predicts that the home team would win be 4 points, but in fact the away team wins by 2 points that results in an error of 6 points for that game. The second approach was a more direct approach towards our ultimate goal of beating the spread. It involves optimizing the neural network to specifically beat the spread. For example, if the spread favors the home team by 4 points, and our predictor predicts the home team wins by 6 points , and the actual home team wins by 8 points then this is considered "beating the spread". 
+When finding the optimal architecture for our MLP regressor we used two different approaches for validation, which optimized for different things. The first approach involved optimizing the neural network to predict spreads that minimized the average prediction error for each game. For example, if our regressor predicts that the home team would win be 4 points, but in fact the away team wins by 2 points that results in an error of 6 points for that game. The second approach was a more direct approach towards our ultimate goal of beating the spread. It involves optimizing the neural network to specifically beat the spread. For example, if the spread favors the home team by 4 points, and our predictor predicts the home team wins by 6 points , and the actual home team wins by 8 points then this is considered "beating the spread". Ultimately, we will choose the architecture that has the highest "beating the spread" rate. Table 10 shows validation results (with approach 1) for 3 seasons of data using both both basic and advanced features. Table 11 shows the aggregated validation results for validation approach 1 while Table 12 shows the aggregated validation results for validation approach 2.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c | c | c | c | c |}
+      \hline
+            &             	(5,) & 	(10,) & 	(5,5) &  	(10,10) & 	(10,20,10) & 	(5,10,10,5)  \\ \hline
+	0  &     	10.54 & 	9.52&	9.55&	9.50&	\textbf{9.44}&	10.54	    \\ \hline
+	0.0001 &   9.56 &     	9.49&	9.56&	9.51&	9.51&		9.46	    \\ \hline	
+	0.01  &    	9.55 &     	9.50& 	9.45&	9.51&	10.54&		9.46	    \\ \hline	
+	0.1	&	9.47&	9.55 &	9.50&	9.53&	9.50&		9.45	    \\ \hline
+	1&		9.52&	09.51&	10.54&	9.49&	9.58&		9.48	    \\ \hline
+	
+    \end{tabular}
+  \end{center}
+  \caption{Validation results for 2008-2011}
+\end{table}
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c |}
+      \hline
+            &            	basic features & 	full features \\ \hline
+	2008 season  &     	9.84 & 	9.55    \\ \hline
+	2008-2011 seasons &   9.60&  9.44 \\ \hline	
+
+	
+    \end{tabular}
+  \end{center}
+  \caption{Aggregate validation results (approach 1)}
+\end{table}
 
 \subsubsection{Testing}
+After finding the optimal architecture for our MLP regressor in each situation we proceeded to test the regressor on the testing data. The testing results with regards to minimizing spread error is shown in Table 13. One of the interesting findings from these validation and testing results is that the predictor almost always does better with more data as well as more features. With the additional data it is quite intuitive why this is the case. With the additional features, our hypothesis is that the home court marginals might be playing a large impact in the predictions.  
 
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c |}
+      \hline
+            &            	basic features & 	full features \\ \hline
+	2008 season  &     	10.32 & 	10.2    \\ \hline
+	2008-2011 seasons &  10.09&  9.92 \\ \hline	
+
+	
+    \end{tabular}
+  \end{center}
+  \caption{Aggregate testing results (approach 1)}
+\end{table}
 
 \section{Breakdown of individual work}
 The breakdown of work between the two members of the group largely followed that given in the original project proposal. Andrea and Tyson jointly worked on preliminary review of the current techniques and the state of the art. Following this, Tyson was primarily involved in the collection of game data from past seasons, and Andrea created the scraper to collect data on historical spreads put out by various betting organizations on previous games. Andrea explored preliminary models such as linear regression, logistic regression, and regression with various basis functions and various degrees of regularization, and Tyson chiefly explored a neural network approach to predicting spreads and win/loss. As discussed during the project proposal meeting, we decided not to implement a convolutional neural network for this problem, as the architecture did not fit the structure of the problem as closely. We each tested the models we worked on against data test sets and historical spreads, and we split the writing up of the report equally.

@@ -193,17 +193,18 @@ if __name__ == '__main__':
   data_spreads = get_data(filename, num_skip, num_training, num_validate, num_testing, get_spread)
 
   data_win_lose_2 = get_file_data(filename_training, filename_validation, filename_testing, num_skip, get_win_lose)
-
+  data_spreads_2 = get_file_data(filename_training, filename_validation, filename_testing, num_skip, get_spread)
   #print calculate_average_point_differential(data_spreads)
 
 
   # clf = neural_network.MLPClassifier(solver = 'lbfgs', alpha = 0.1, hidden_layer_sizes = (10,))
   # clf.fit(data_win_lose[0], data_win_lose[1])
   # print clf.score(data_win_lose[4], data_win_lose[5])
-  best_architecture = find_best_architecture(data_win_lose_2, True)
+  best_architecture = find_best_architecture(data_spreads_2, False)
   pprint.pprint(best_architecture[3])
-  # best_classifier = neural_network.MLPRegressor(hidden_layer_sizes=best_architecture[0], solver="lbfgs", alpha=best_architecture[1])
-  # print get_testing_error(data_win_lose, best_classifier)
+  best_predictor = neural_network.MLPRegressor(hidden_layer_sizes=best_architecture[0], solver="lbfgs", alpha=best_architecture[1])
+  best_predictor.fit(data_spreads[0], data_spreads[1])
+  print calculate_testing_score_nn_regressor(data_spreads_2, best_predictor)
 
   # score_predictor = neural_network.MLPRegressor( solver = 'lbfgs', alpha = best_architecture[1], hidden_layer_sizes = best_architecture[0])
   # score_predictor.fit(data_spreads[0], data_spreads[1])
