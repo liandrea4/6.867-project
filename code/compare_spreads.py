@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 from regression      import get_spread, get_file_data
+=======
+from regression      import get_spread
+>>>>>>> d86eddb2d62b8fc162704cfa02f58ab633794d21
 from sklearn         import linear_model, neural_network
 import csv
 import json
@@ -45,8 +49,8 @@ def extract_from_file(filename, num_skip, y_fn=get_spread):
         index += 1
         continue
 
-      x = [ float(row[i]) for i in win_rate_indices ]
-      # x = [ float(value) for value in row[5:] ]
+      # x = [ float(row[i]) for i in win_rate_indices ]
+      x = [ float(value) for value in row[5:] ]
       away_score = float(row[3])
       home_score = float(row[4])
       y = y_fn(away_score, home_score)
@@ -68,7 +72,7 @@ def get_file_data(filename_training, filename_validation, filename_testing, num_
   return [x_training, y_training, x_validate, y_validate, x_testing, y_testing]
 
 
-def get_row_from_sreads(filename, date, away_team, home_team):
+def get_row_from_spreads(filename, date, away_team, home_team):
   with open(filename, 'r') as f:
     reader = csv.DictReader(f, fieldnames=spreads_fieldnames)
 
@@ -126,6 +130,11 @@ if __name__ == '__main__':
   linear_classifier = linear_model.LinearRegression()
   linear_classifier.fit(x_training, y_training)
 
+  opt_layer_size = (10, 20, 10)
+  opt_alpha = 0.0001
+  nn_classifier = neural_network.MLPRegressor(hidden_layer_sizes=opt_layer_size, solver="lbfgs", alpha=opt_alpha)
+  nn_classifier.fit(x_training, y_training)
+
   spreads_error_dict = {}
   spreads_winlose_dict = {}
 
@@ -135,9 +144,13 @@ if __name__ == '__main__':
 
   # Spread = away score - home score (always do from perspective of home team)
   for xi_testing_row, actual_spread in zip(x_testing_row, y_testing_row):
-    input_data = [ float(xi_testing_row[i]) for i in win_rate_indices ]
+    input_data = [ float(val) for val in xi_testing_row[5:]]
 
+<<<<<<< HEAD
     predicted_spread = best_predictor.predict(input_data)
+=======
+    predicted_spread = nn_classifier.predict(input_data)
+>>>>>>> d86eddb2d62b8fc162704cfa02f58ab633794d21
 
     date = xi_testing_row[0]
     away_team = xi_testing_row[1]
@@ -145,7 +158,7 @@ if __name__ == '__main__':
     away_score = xi_testing_row[3]
     home_score = xi_testing_row[4]
 
-    spreads_row = get_row_from_sreads(filename_spreads, date, away_team, home_team)
+    spreads_row = get_row_from_spreads(filename_spreads, date, away_team, home_team)
     if spreads_row is None:
       continue
 
@@ -186,6 +199,9 @@ if __name__ == '__main__':
 
 
 
+
+### Opt nn:
+## {19: 0.469, 93: 0.464, 238: 0.468, 1096: 0.460}
 
 
 
