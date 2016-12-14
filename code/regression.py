@@ -250,26 +250,27 @@ if __name__ == '__main__':
   print best_predictor.predict(denver + dallas)
   print best_predictor.predict(portland + clippers)
 
-  # # SPREADS
-  # spreads = []
-  # spreads.append(spread_predictor.predict(charlotte + indiana)[0])
-  # spreads.append(spread_predictor.predict(washington + miami)[0])
-  # spreads.append(spread_predictor.predict(milwaukee + toronto)[0])
-  # spreads.append(spread_predictor.predict(brooklyn + houston)[0])
-  # spreads.append(spread_predictor.predict(denver + dallas)[0])
-  # spreads.append(spread_predictor.predict(portland+ clippers)[0])
+  # SPREADS
+  spreads = []
+  spreads.append(spread_predictor.predict(charlotte + indiana)[0])
+  spreads.append(spread_predictor.predict(washington + miami)[0])
+  spreads.append(spread_predictor.predict(milwaukee + toronto)[0])
+  spreads.append(spread_predictor.predict(brooklyn + houston)[0])
+  spreads.append(spread_predictor.predict(denver + dallas)[0])
+  spreads.append(spread_predictor.predict(portland+ clippers)[0])
 
-  # errors = []
-  # errors.append(abs(spread_predictor.predict(charlotte + indiana)[0] - (-16)))
-  # errors.append(abs(spread_predictor.predict(washington + miami)[0] - (-11)))
-  # errors.append(abs(spread_predictor.predict(milwaukee + toronto)[0] - (-22)))
-  # errors.append(abs(spread_predictor.predict(brooklyn + houston)[0] - (-4)))
-  # errors.append(abs(spread_predictor.predict(denver + dallas)[0] - (-20)))
-  # errors.append(abs(spread_predictor.predict(portland + clippers)[0] - (-1)))
+  errors = []
+  errors.append(abs(spread_predictor.predict(charlotte + indiana)[0] - (-16)))
+  errors.append(abs(spread_predictor.predict(washington + miami)[0] - (-11)))
+  errors.append(abs(spread_predictor.predict(milwaukee + toronto)[0] - (-22)))
+  errors.append(abs(spread_predictor.predict(brooklyn + houston)[0] - (-4)))
+  errors.append(abs(spread_predictor.predict(denver + dallas)[0] - (-20)))
+  errors.append(abs(spread_predictor.predict(portland + clippers)[0] - (-1)))
 
-  # print spreads
-  # print sum(errors) / 5.
-  # print np.std(errors)
+  print spreads
+  print sum(errors) / 5.
+  print errors
+  print np.std(errors)
 
 
   # other_sum = [17.5, 14, 12.5, 9.5, 22.5, 9]
