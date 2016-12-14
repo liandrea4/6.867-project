@@ -189,7 +189,7 @@ if __name__ == '__main__':
     start_year = 2000
     end_year = 2015
 
-  filename = "spreads.csv"
+  filename = "data/spreads.csv"
   fieldnames = [ 'date', 'team1', 'team2', 'team1_score', 'team2_score', 'spreads_json' ]
   with open(filename, 'w') as f:
     writer = csv.DictWriter(f, fieldnames, lineterminator='\n')

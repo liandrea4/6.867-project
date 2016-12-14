@@ -84,7 +84,7 @@ First, it is important to understand that the NBA is comprised of 30 teams split
 
 \textit{b) The Spread:} The spread is a bit more advanced than simply win/loss. When a gambler bets against the spread, he either bets that the favorite shall win by more than the spread or that the underdog will lose by less than the spread. Typically, the spread is expressed as a negative number, which signifies the expected margin of victory for the favorite. In order to place a bet against the spread, a gambler generally needs to bet \$110 for the chance to win a \$100 payoff. The amount required for the chance to win \$100 is generally expressed in parentheses.\\
 e.g. Golden State Warriors -7.4 (-110) \\
-     Cleveland Cavaliers 7.4 (-110)
+Cleveland Cavaliers 7.4 (-110)
 
 The gambling authority generally selects the spread with the goal of splitting the betting money down the line in order to essentially make arbitrage with 0 risk. Due to the fact that the spreads are created in this manner and not with accuracy in mind, we believe that there is definitely room for improvement
 
@@ -118,9 +118,12 @@ In order to compare our algorithm and our predicted spreads against Vegas and ot
 The need for feature normalization arises because our features are on different scales. For example, the average points a team scores every game is around $100$ whereas the average number of offensive rebounds a team gets per game is around $15$. In order to normalize the features we took a Z score approach that centered all the data at $0$ and set the standard deviation to be $1$.
 
 \section{Linear classifier}
-As a baseline, we used our own implementation of a linear classifier on basic features including running averages of home/away team points scored, points allowed, Elo score, games won, games played, and win rate. Based on the 2006-2007 season, in predicting win/loss (as opposed to the spread of a win/loss), the linear classifier had an accuracy of 64.3\% on training data and 63.3\% on testing data.
+As a baseline, we used our own implementation of a linear classifier on basic features including running averages of home/away team points scored, points allowed, Elo score, games won, games played, and win rate. We ran this classification in order to predict which team wins/loses in a given matchup as well as in order to predict spreads on these matchups.
 
-After adding further features, such as home court advantage, were added to the model, the linear classifier has an accuracy of 72.3\% on training data and 66.9\% on testing data based on the 2008-2009 season.
+\subsection{Win/loss prediction}
+Based on the 2006-2007 season, in predicting win/loss, the linear classifier had an accuracy of 64.3\% on training data and 63.3\% on testing data. After adding further features, such as home court advantage, were added to the model, the linear classifier has an accuracy of 72.3\% on training data and 66.9\% on testing data based on the 2008-2009 season.
+
+\subsection{Spread prediction}
 
 We additionally explored the ability of the classifier to predict spreads on games, in which the margin of victory is taken into account instead of a simple win/loss. In this case, the accuracy metric was the absolute value of the difference between the predicted spread and the actual spread. Using basic features on the 2006-2007 season, the average absolute value spread error was 9.31 points for training data and 10.07 points for testing data.
 
@@ -139,7 +142,9 @@ These results for the performance of the linear classifier are summarized in Tab
   \caption{Classifier performance on test dataset}
 \end{table}
 
-Similar results were found when we used a polynomial basis and allowed the degree of the polynomial fitting the data to grow. Out of values for $M \in [1, 10]$, we found that a regression model with $M=1$ performed best, where $M=10$ on the other side of the spectrum led to extreme overfitting. The average spread error is summarized in Table 2 for each of the different possible values for $M$, and graphs for representative values of $M$ are illustrated in Figure 3. Note that for ease of illustration of data here, only the win rate feature is used as the feature vector
+\subsection{Polynomial basis regression}
+
+Similar results were found when we used a polynomial basis and allowed the degree of the polynomial fitting the data to grow. Out of values for $M \in [1, 10]$, we found that a regression model with $M=1$ performed best, where $M=10$ on the other side of the spectrum led to extreme overfitting. The average spread error is summarized in Table 2 for each of the different possible values for $M$, and graphs for representative values of $M$ are illustrated in Figure 3. Note that for ease of illustration of data here, only the differential win rate is used as the feature vector when plotting.
 
 \begin{table}
   \begin{center}
@@ -165,9 +170,15 @@ Similar results were found when we used a polynomial basis and allowed the degre
 \caption{Win rate vs. actual spread}
 \end{figure}
 
+As the data naturally suggested a fairly linear trend and because $M=1$ performed the best during polynomial regression, moving forwards we primarily considered linear regression and improvements to the linear classifier in order to improve overall performance of the classifier.
+
+\subsection{Multiple seasons of data}
+
 We additionally explored the use of generating training, validation, and testing datasets across multiple seasons of data. In this case, because we train the model against certain features of the teams playing (e.g. running average win rate, average points scored, average points allowed, etc.), and not the skill level associated with the team itself, we can aggregate data across multiple seasons. This holds true even if teams and their respective players have changed significantly between seasons, because the features we draw from the data are running averages calculated from the season so far.
 
 When we run the linear classifier on three seasons worth of data, in which the training, validation, and testing datasets are each made up of a season of data (about 1300 games), the accuracy of the algorithm improves as expected. More specifically, when run on three seasons of data, the linear classifier is able to classify win/loss of matchups with an accuracy of 72.3\% on training data and 68.6\% on testing data. In terms of spreads, the linear classifier predicts spreads with an average spread error of 8.98 points on training data and 9.29 points on testing data. Thus, increasing the size of the data set has a fairly significant improvement in the accuracy of the linear classifier when compared with the 66.9\% accuracy previously obtained for win/loss predictions and 13.60 spread error for spread predictions.
+
+\subsection{Analysis of feature weights}
 
 As previously mentioned, we explored classification of the linear classifier with a set of basic features and a set of more complex partially derived from these basic features. The basic features included each team's Elo score, average points scored, average points allowed, number of games played, number of games won, and win rate. The additional features we added included home court advantage (e.g. home court average points scored, home court average points allowed, home court win rate, etc.) as well as possessions, offensive rebounds, and defensive rebounds. In order to understand which features contributed most heavily to the win/loss and spreads predictions, we plotted the weights of each of the features. These relative weights are illustrated in Figure 4, in which the win rate features (away team win rate, home team win rate, away team home court win rate, and home team home court win rate) were in general the most important features. For three seasons of data however in win/loss predictions, the other features contributed much more relative to the classifiers for spreads predictions and one season of data.
 
@@ -208,13 +219,107 @@ Interestingly, when we train the linear classifier using only the win rate featu
   \caption{Classifier performance on 3 seasons}
 \end{table}
 
+\subsection{Consideration of LASSO}
+When originally considering the types of models to implement and explore in trying to solve this problem, we had planned on using a LASSO model with feature weight sparsity in order to reduce overfitting. After visualizing the relative weights of the features in the linear classifier however, we decided that LASSO was not necessary in this case as the feature weights already exhibit significant sparsity for the large part. LASSO would likely therefore not have given significantly different feature weights and likely would not have significantly improved the accuracy or spread error of the classifier.
 
-\section{Evaluation}
-In addition to calculating and analyzing the average spread error, we also compared our spreads predictions against other betting authorities' spreads. After creating a scaper which scraped the spreads posted by other betting authorities, we were able to determine the rate at which our spread would have beaten the betting authority's spread. This would occur in two scenarios: (1) if our predicted spread indicates that the winning team would have won by more than the other betting authority's predicted spread (e.g. if our spread is -8 and the other betting authority's spread is -5 on a game in which the favored team won by more than five points), or (2) if the predicted spread indicates that the winning team would have won by less or lost compared with theo ther begging authority's predicted spread (e.g. if our spread is +2 and the other betting authority's spread is -5 on a game in which the favored team lost or won by less than five points).
+This could have been due to the skewed predictive powers of each of the different features. Intuitively, it is reasonable that certain features such as home and away team win rate would be much more important than other auxiliary features such as possessions or rebounds, which still provide some information, but to a much smaller degree. Thus, the natural structure of the problem and data lend the model towards sparse feature weights without the need for LASSO to force sparsity in the data and model.
+
+\section{Evaluation with historical data}
+In addition to calculating and analyzing the average spread error, we also compared our spreads predictions against other betting authorities' spreads. After creating a scaper which scraped the spreads posted by other betting authorities, we were able to determine the rate at which our spread would have beaten the betting authority's spread. This would occur in two scenarios: (1) if our predicted spread indicates that the winning team would have won by more than the other betting authority's predicted spread (e.g. if our spread is -8 and the other betting authority's spread is -5 on a game in which the favored team won by more than five points), or (2) if the predicted spread indicates that the winning team would have won by less or lost compared with the other betting authority's predicted spread (e.g. if our spread is +2 and the other betting authority's spread is -5 on a game in which the favored team lost or won by less than five points).
+
+\subsection{Linear classifier}
+We compared our best linear classifier (three seasons of data with only the four win rate features) against the spreads predicted by other betting authorities. We found that the spreads predicted by our linear classifier performed slightly worse than the spreads published by betting authorities. These results are summarized in Table 5, where win rate refers to the percentage of games our spread would have beaten the given betting authority's spread. Overall, the other betting authorities had an average spread error of approximately 8.5 points and would have beaten our spread a little more than 50\% of the time. This is compared with our average spread error of 9.14 points for a linear classifier.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c | }
+      \hline
+                       & Spread Error      & Win rate  \\ \hline
+      Authority A      & 8.70              & 48.2\%    \\ \hline
+      Authority B      & 8.65              & 46.6\%    \\ \hline
+      Authority C      & 8.67              & 48\%      \\ \hline
+      Authority D      & 8.67              & 47.8\%    \\ \hline
+    \end{tabular}
+  \end{center}
+  \caption{Comparison with other betting authorities}
+\end{table}
+
+\subsection{Neural networks}
+
+
+\section{Evaluation with current data}
+In addition to evaluating our classifiers against historical data from previous seasons, we additionally explored evaluation against data from the current season. Practically, this would be the context in which we would use our classifier to predict the results and spreads of matchups which have not yet taken place. The input to the classifier is the running averages for the features so far in the season, and the output is either the predicted win/loss or the predicted spread on the matchup.
+
+\subsection{Linear classifier}
+We trained our linear classifier on three seasons of past data and ran the classifier on some recent games this season. From this we were able to more realistically compare our win/loss predictions with the actual outcomes of current games and our spread predictions with other betting authorities' spreads and the actual spreads. Of the six games that took place on Monday 12/12/2016, the classifier was able to correctly predict the winner in five of the games. The average spread error on these games was 11.85 points with a standard deviation of 4.03 points. These results are given in Table \_\_\_\_\_\_, where the spread error represents the absolute value of the difference between the predicted spread and the actual spread. In comparison with our classifier and spreads, other betting authorities had an average spread error of 14.17 points with a standard deviation of 4.69 points.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c | }
+      \hline
+                                & Correct win/loss     & Spread error  \\ \hline
+      Charlotte @ Indiana       & Correct              & 12.54    \\ \hline
+      Milwaukee @ Toronto       & Correct              & 14.64    \\ \hline
+      Washington @ Miami        & Wrong                & 11.30     \\ \hline
+      Brooklyn @ Houston        & Correct              & 7.82      \\ \hline
+      Denver @ Dallas           & Correct              & 18.40    \\ \hline
+      Portland @ L.A. Clippers  & Correct              & 6.39    \\ \hline
+    \end{tabular}
+  \end{center}
+  \caption{Performance on 12/12/2016 games}
+\end{table}
+
+When comparing our spreads with that of other betting authorities, we found that our classifier would have bet on the winning side of the spread in five of the six games. This is illustrated in Table \_\_\_\_\_, which compares the predicted spread, the other (betting authority's) spread, and the actual spread. These spreads are all given from the perspective of the home team, in which a negative spread indicates that the home team is favored to win by the given number of points. From this data, we can see that the spreads produced by the classifier would have led us to bet on the winning side of the betting authority's spreads in all of the games on Monday 12/12/2016 except for the matchup between Milwaukee Bucks and Toronto Raptors. This is indicated in the "Win?" column of the table.
+
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c | c | c | }
+      \hline
+                                & Predicted     & Other  & Actual & Win?  \\ \hline
+      Charlotte @ Indiana       & -3.45         & +1.5   & -16    & Yes   \\ \hline
+      Milwaukee @ Toronto       & -7.36         & -8     & -22    & No   \\ \hline
+      Washington @ Miami        & +0.30         & +1.5   & -11    & Yes    \\ \hline
+      Brooklyn @ Houston        & -11.8         & -13.5  & -4     & Yes   \\ \hline
+      Denver @ Dallas           & -1.60         & +2.5   & -20    & Yes   \\ \hline
+      Portland @ L.A. Clippers  & -7.39         & -10    & -1     & Yes   \\ \hline
+    \end{tabular}
+  \end{center}
+  \caption{Performance on 12/12/2016 games}
+\end{table}
+
+Due to the arbitrage mentioned earlier in which you must bet more than \$100 in order to win \$100, we can also consider a slightly more conservative approach. More specifically, in the above model, we always bet on the spread regardless of the relationship between the predicted spread and the betting authority's spread. We could consider only betting if we are reasonably confident that our spread will beat the betting authority's spread. In other words, we could decide to bet only if our predicted spread is at least one point different from the betting authority's spread. If we were to adopt such an approach, then in the matchups for the games on Monday 12/12/2016, we would not have bet on one of the matchups and we would have won all of the spreads we bet on. These results are given in Table \_\_\_\_\_, in which the line for the Milwaukee and Toronto matchup in the conservative approach indicates that we would not have bet on that matchup.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c | c | c | }
+      \hline
+                                & Regular      & Conservative  \\ \hline
+      Charlotte @ Indiana       & Yes              & Yes   \\ \hline
+      Milwaukee @ Toronto       & No               & ---   \\ \hline
+      Washington @ Miami        & Yes              & Yes    \\ \hline
+      Brooklyn @ Houston        & Yes              & Yes   \\ \hline
+      Denver @ Dallas           & Yes              & Yes   \\ \hline
+      Portland @ L.A. Clippers  & Yes              & Yes   \\ \hline
+    \end{tabular}
+  \end{center}
+  \caption{Comparison of different betting approaches}
+\end{table}
+
+
+Interestingly, we found that many of the other betting authorities had very similar spreads with only more noticeable deviations seen in the amount of money needed to bet in order to win \$100. Because we are not considering how to place money when deciding on how to bet, our performance across the professional betting authorities was largely fairly consistent.
+
+The fairly significantly different results between evaluating our classifier against other betting authorities on historical spreads and more current spreads are particularly interesting to us. This could be partially attributed to the fact that in the case of evaluating our classifier on current spreads, we train with all three seasons of data available to us, whereas when we test against historical data, we train on one season of data and set aside the other two seasons of data for validation and testing. Thus, this dramatic improvement in performance could be due to an increased number of training sample points. Either way however, such performance of our classifier makes us fairly confident in our ability to predict spreads when compared with professional betting authorities.
+
+One matchup on Monday 12/12/2016 which is of particular interest here is the one between the Charlotte Hornets and Indiana Pacers. So far in the season, the Charlotte Hornets had 14-10 record whereas the Indiana Pacers had 12-12 record. Based on win rate alone, one might think that the Hornets would have had the edge in this game. If we look at the home court records however, we can see that the Pacers, who were playing at home, had a home court record of 9-4 while the Hornets had a road record of 6-4. Thus, by considering the home court advantage, we were able to correctly predict that Indiana Pacers would win and therefore hypothetically bet on the winning side of professional betting authority spreads.
+
+\subsection{Neural networks}
 
 
 \section{Potential sources of failure}
 Some drawbacks to the algorithm presented here include the fact that we do not examine individual player data. This was a choice made largely due to the fact that individualized player data is quite difficult to obtain, especially in quantities large enough for accurate training, validation, and testing. Because we look at a team's performance overall so far in the season however, this means that our algorithm is susceptible to changes in starting player lineups, player trades made during the season, and player injuries. Thus, despite the acceptable performance of our algorithm, we do identify this source of weakness in the ability to predict spreads and classify win/loss in matchups. Future iterations of the algorithm would therefore primarily seek to address these potential sources of failure in order to further improve and refine the overall predictive power of the algorithm.
+
+Future iterations of this algorithm would explore the addition of features such as the number of assists, steals, blocks, turnovers, and fouls per game, as well as assist to turnover ratio and average player efficiency ratings.
 
 
 \section{Breakdown of individual work}
