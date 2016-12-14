@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy             as np
-from sklearn            import linear_model
+from sklearn            import linear_model, neural_network
+import nn
 import csv
 
 win_rate_indices = [ 10, 14, 23, 27 ]
@@ -180,6 +181,18 @@ if __name__ == '__main__':
 
   win_lose_model = linear_model.LinearRegression()
   spreads_model = linear_model.LinearRegression()
+
+
+  best_architecture = nn.find_best_architecture(file_data_win_lose, True)
+
+  best_predictor = neural_network.MLPClassifier(hidden_layer_sizes=best_architecture[0], solver="lbfgs", alpha=best_architecture[1])
+  best_predictor.fit(file_data_win_lose[0], file_data_win_lose[1])
+
+  best_architecture_spread = nn.find_best_architecture(file_data_spreads, False)
+
+  spread_predictor = neural_network.MLPRegressor(hidden_layer_sizes=best_architecture_spread[0], solver="lbfgs", alpha=best_architecture[1])
+  spread_predictor.fit(file_data_spreads[0], file_data_spreads[1])
+
   # logistic_classifier = linear_model.LogisticRegression()
   # lasso_classifier = linear_model.Lasso()
 
@@ -223,30 +236,40 @@ if __name__ == '__main__':
 
   # WIN LOSE
   # 1 = home team won, 0 = away team won
-  print win_lose_model.predict(philly + detroit)[0] < 0.5
-  print win_lose_model.predict(boston + ok_city)[0] > 0.5
-  print win_lose_model.predict(warriors + minnesota)[0] < 0.5
-  print win_lose_model.predict(new_orleans + phoenix)[0] < 0.5
-  print win_lose_model.predict(new_york + lakers)[0] < 0.5
+  # print win_lose_model.predict(philly + detroit)[0] < 0.5
+  # print win_lose_model.predict(boston + ok_city)[0] > 0.5
+  # print win_lose_model.predict(warriors + minnesota)[0] < 0.5
+  # print win_lose_model.predict(new_orleans + phoenix)[0] < 0.5
+  # print win_lose_model.predict(new_york + lakers)[0] < 0.5
 
-  # SPREADS
-  spreads = []
-  spreads.append(spreads_model.predict(philly + detroit)[0])
-  spreads.append(spreads_model.predict(boston + ok_city)[0])
-  spreads.append(spreads_model.predict(warriors + minnesota)[0])
-  spreads.append(spreads_model.predict(new_orleans + phoenix)[0])
-  spreads.append(spreads_model.predict(new_york + lakers)[0])
 
-  errors = []
-  errors.append(abs(spreads_model.predict(philly + detroit)[0] - (18)))
-  errors.append(abs(spreads_model.predict(boston + ok_city)[0] - (-3)))
-  errors.append(abs(spreads_model.predict(warriors + minnesota)[0] - (8)))
-  errors.append(abs(spreads_model.predict(new_orleans + phoenix)[0] - (1)))
-  errors.append(abs(spreads_model.predict(new_york + lakers)[0] - (6)))
+  print best_predictor.predict(charlotte + indiana)
+  print best_predictor.predict(washington + miami)
+  print best_predictor.predict(milwaukee + toronto)
+  print best_predictor.predict(brooklyn + houston)
+  print best_predictor.predict(denver + dallas)
+  print best_predictor.predict(portland + clippers)
 
-  print spreads
-  print sum(errors) / 5.
-  print np.std(errors)
+  # # SPREADS
+  # spreads = []
+  # spreads.append(spread_predictor.predict(charlotte + indiana)[0])
+  # spreads.append(spread_predictor.predict(washington + miami)[0])
+  # spreads.append(spread_predictor.predict(milwaukee + toronto)[0])
+  # spreads.append(spread_predictor.predict(brooklyn + houston)[0])
+  # spreads.append(spread_predictor.predict(denver + dallas)[0])
+  # spreads.append(spread_predictor.predict(portland+ clippers)[0])
+
+  # errors = []
+  # errors.append(abs(spread_predictor.predict(charlotte + indiana)[0] - (-16)))
+  # errors.append(abs(spread_predictor.predict(washington + miami)[0] - (-11)))
+  # errors.append(abs(spread_predictor.predict(milwaukee + toronto)[0] - (-22)))
+  # errors.append(abs(spread_predictor.predict(brooklyn + houston)[0] - (-4)))
+  # errors.append(abs(spread_predictor.predict(denver + dallas)[0] - (-20)))
+  # errors.append(abs(spread_predictor.predict(portland + clippers)[0] - (-1)))
+
+  # print spreads
+  # print sum(errors) / 5.
+  # print np.std(errors)
 
 
   # other_sum = [17.5, 14, 12.5, 9.5, 22.5, 9]

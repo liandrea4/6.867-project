@@ -389,8 +389,8 @@ After finding the optimal architecture for our MLP regressor in each situation w
 \section{Evaluation with historical data}
 In addition to calculating and analyzing the average spread error, we also compared our spreads predictions against other betting authorities' spreads. After creating a scaper which scraped the spreads posted by other betting authorities, we were able to determine the rate at which our spread would have beaten the betting authority's spread. This would occur in two scenarios: (1) if our predicted spread indicates that the winning team would have won by more than the other betting authority's predicted spread (e.g. if our spread is -8 and the other betting authority's spread is -5 on a game in which the favored team won by more than five points), or (2) if the predicted spread indicates that the winning team would have won by less or lost compared with the other betting authority's predicted spread (e.g. if our spread is +2 and the other betting authority's spread is -5 on a game in which the favored team lost or won by less than five points).
 
-\subsection{Linear classifier}
-We compared our best linear classifier (only the four win rate features) against the spreads predicted by other betting authorities. We found that the spreads predicted by our linear classifier performed slightly worse than the spreads published by betting authorities. These results are summarized in Table 14, where win rate refers to the percentage of games our spread would have beaten the given betting authority's spread. Overall, the other betting authorities had an average spread error of approximately 8.5 points and would have beaten our spread a little more than 50\% of the time. This is compared with our average spread error of 9.14 points for a linear classifier.
+\subsection{Comparing to betting authorities}
+We compared both our best linear classifier as well as our best neural network regressor (only the four win rate features) against the spreads predicted by other betting authorities. We found that the spreads predicted by our linear classifier performed slightly worse than the spreads published by betting authorities in both cases. These results are summarized in Table 14, where win rate refers to the percentage of games our spread would have beaten the given betting authority's spread. Overall, the other betting authorities had an average spread error of approximately 8.5 points and would have beaten our spread a little more than 50\% of the time. This is compared with our average spread error of 9.14 points for both our linear classifier and neural network regressor.
 
 \begin{table}
   \begin{center}
@@ -406,14 +406,12 @@ We compared our best linear classifier (only the four win rate features) against
   \caption{Comparison with other betting authorities}
 \end{table}
 
-\subsection{Neural networks}
 
 
-\section{Evaluation with current data}
-In addition to evaluating our classifiers against historical data from previous seasons, we additionally explored evaluation against data from the current season. Practically, this would be the context in which we would use our classifier to predict the results and spreads of matchups which have not yet taken place. The input to the classifier is the running averages for the features so far in the season, and the output is either the predicted win/loss or the predicted spread on the matchup.
+\section{Making predictions on future data}
+In addition to evaluating our classifiers against historical data from previous seasons, we additionally explored evaluation against future games/ spreads. Practically, this would be the context in which we would use our classifier to predict the results and spreads of matchups which have not yet taken place. The input to the classifier is the running averages for the features so far in the season, and the output is either the predicted win/loss or the predicted spread on the matchup.
 
-\subsection{Linear classifier}
-We trained our linear classifier on three seasons of past data and ran the classifier on some recent games this season. From this we were able to more realistically compare our win/loss predictions with the actual outcomes of current games and our spread predictions with other betting authorities' spreads and the actual spreads. Of the six games that took place on Monday 12/12/2016, the classifier was able to correctly predict the winner in five of the games. The average spread error on these games was 11.85 points with a standard deviation of 4.03 points. These results are given in Table 15, where the spread error represents the absolute value of the difference between the predicted spread and the actual spread. In comparison with our classifier and spreads, other betting authorities had an average spread error of 14.17 points with a standard deviation of 4.69 points.
+We trained both our linear classifier as well as our neural network classifier on three seasons of past data and ran them on a few games that were occurring in the future. From this we were able to more realistically compare our win/loss predictions with the actual outcomes of current games and our spread predictions with other betting authorities' spreads and the actual spreads. Of the six games that took place on Monday 12/12/2016, the classifier was able to correctly predict the winner in five of the games. The average spread error on these games was 11.85 points with a standard deviation of 4.03 points. These results are given in Table 15, where the spread error represents the absolute value of the difference between the predicted spread and the actual spread. In comparison with our classifier and spreads, other betting authorities had an average spread error of 14.17 points with a standard deviation of 4.69 points.
 
 \begin{table}
   \begin{center}
@@ -430,6 +428,7 @@ We trained our linear classifier on three seasons of past data and ran the class
   \end{center}
   \caption{Performance on 12/12/2016 games}
 \end{table}
+
 
 When comparing our spreads with that of other betting authorities, we found that our classifier would have bet on the winning side of the spread in five of the six games. This is illustrated in Table 16 which compares the predicted spread, the other (betting authority's) spread, and the actual spread. These spreads are all given from the perspective of the home team, in which a negative spread indicates that the home team is favored to win by the given number of points. From this data, we can see that the spreads produced by the classifier would have led us to bet on the winning side of the betting authority's spreads in all of the games on Monday 12/12/2016 except for the matchup between Milwaukee Bucks and Toronto Raptors. This is indicated in the "Win?" column of the table.
 
@@ -450,6 +449,23 @@ When comparing our spreads with that of other betting authorities, we found that
   \caption{Performance on 12/12/2016 games}
 \end{table}
 
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c | c | c | }
+      \hline
+                                & Predicted     & Other  & Actual & Win?  \\ \hline
+      Charlotte @ Indiana       & -4.17         & +1.5   & -16    & Yes   \\ \hline
+      Milwaukee @ Toronto       & -7.71         & -8     & -22    & ---   \\ \hline
+      Washington @ Miami        & +1.52         & +1.5   & -11    & No    \\ \hline
+      Brooklyn @ Houston        & -11.58         & -13.5  & -4     & Yes   \\ \hline
+      Denver @ Dallas           & -0.177         & +2.5   & -20    & Yes   \\ \hline
+      Portland @ L.A. Clippers  & -7.98         & -10    & -1     & Yes   \\ \hline
+    \end{tabular}
+  \end{center}
+  \caption{Performance on 12/12/2016 games}
+\end{table}
+
+
 Due to the arbitrage mentioned earlier in which you must bet more than \$100 in order to win \$100, we can also consider a slightly more conservative approach. More specifically, in the above model, we always bet on the spread regardless of the relationship between the predicted spread and the betting authority's spread. We could consider only betting if we are reasonably confident that our spread will beat the betting authority's spread. In other words, we could decide to bet only if our predicted spread is at least one point different from the betting authority's spread. If we were to adopt such an approach, then in the matchups for the games on Monday 12/12/2016, we would not have bet on one of the matchups and we would have won all of the spreads we bet on. These results are given in Table 17, in which the line for the Milwaukee and Toronto matchup in the conservative approach indicates that we would not have bet on that matchup.
 
 \begin{table}
@@ -468,6 +484,21 @@ Due to the arbitrage mentioned earlier in which you must bet more than \$100 in 
   \caption{Comparison of different betting approaches}
 \end{table}
 
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c | c | c | }
+      \hline
+                                & Regular      & Conservative  \\ \hline
+      Charlotte @ Indiana       & Yes              & Yes   \\ \hline
+      Milwaukee @ Toronto       & ---               & ---   \\ \hline
+      Washington @ Miami        & No              & ---    \\ \hline
+      Brooklyn @ Houston        & Yes              & Yes   \\ \hline
+      Denver @ Dallas           & Yes              & Yes   \\ \hline
+      Portland @ L.A. Clippers  & Yes              & Yes   \\ \hline
+    \end{tabular}
+  \end{center}
+  \caption{Comparison of different betting approaches}
+\end{table}
 
 Interestingly, we found that many of the other betting authorities had very similar spreads with only more noticeable deviations seen in the amount of money needed to bet in order to win \$100. Because we are not considering how to place money when deciding on how to bet, our performance across the professional betting authorities was largely fairly consistent.
 
