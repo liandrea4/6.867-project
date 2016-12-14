@@ -88,10 +88,15 @@ def parse_spread(unparsed):
 # win if -8 and other spread -5 and actual spread < -5
 # win if +8 and other spread +5 and actual spread > +5
 def get_spreads_winlose(predicted_spread, actual_spread, other_spread):
-  if predicted_spread < other_spread and actual_spread < other_spread:
-    return 1
+  # if predicted_spread < other_spread and actual_spread < other_spread:
+  #   return 1
 
-  if predicted_spread > other_spread and actual_spread > other_spread:
+  # if predicted_spread > other_spread and actual_spread > other_spread:
+  #   return 1
+
+  # return 0
+
+  if predicted_spread * other_spread > 0:
     return 1
 
   return 0
@@ -156,24 +161,24 @@ if __name__ == '__main__':
 
       spread_error = abs(spread - actual_spread)
 
-      sum_error = spreads_error_dict[betting_authority][0] + spread_error
-      num = spreads_error_dict[betting_authority][1] + 1
-      spreads_error_dict[betting_authority] = (sum_error, num)
+      # sum_error = spreads_error_dict[betting_authority][0] + spread_error
+      # num = spreads_error_dict[betting_authority][1] + 1
+      # spreads_error_dict[betting_authority] = (sum_error, num)
 
       winlose = get_spreads_winlose(predicted_spread, actual_spread, spread)
       num_win = spreads_winlose_dict[betting_authority][0] + winlose
-      num_total = spreads_error_dict[betting_authority][1] + 1
+      num_total = spreads_winlose_dict[betting_authority][1] + 1
       spreads_winlose_dict[betting_authority] = (num_win, num_total)
 
 
   print spreads_winlose_dict
-  print spreads_error_dict
+  # print spreads_error_dict
 
   winlose_accuracies = { betting_authority : float(spreads_winlose_dict[betting_authority][0]) / spreads_winlose_dict[betting_authority][1] for betting_authority in spreads_winlose_dict }
   print winlose_accuracies
 
-  spreads_errors = { betting_authority : float(spreads_error_dict[betting_authority][0]) / spreads_error_dict[betting_authority][1] for betting_authority in spreads_error_dict }
-  print spreads_errors
+  # spreads_errors = { betting_authority : float(spreads_error_dict[betting_authority][0]) / spreads_error_dict[betting_authority][1] for betting_authority in spreads_error_dict }
+  # print spreads_errors
 
 
 
