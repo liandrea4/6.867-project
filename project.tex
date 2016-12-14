@@ -82,7 +82,7 @@ First, it is important to understand that the NBA is comprised of 30 teams split
 
 \textit{a) Win/ Loss:} This is the most basic bet that can be made. The gambler simply picks which team he believes will win the game and if he is correct then he'll win money.
 
-\textit{b) The Spread:} The spread is a bit more advanced than simply win/loss. When a gambler bets against the spread, he either bets that the favorite shall win by more than the spread or that the underdog will lose by less than the spread. Typically, the spread is expressed as a negative number, which signifies the expected margin of victory for the favorite. In order to place a bet against the spread, a gambler generally needs to bet \$110 for the chance to win a \$100 payoff. The amount required for the chance to win \$100 is generally expressed in parentheses.\\
+\textit{b) The Spread:} The spread is a bit more advanced than simply win/loss. When a gambler bets against the spread, he either bets that the favorite shall win by more than the spread or that the underdog will lose by less than the spread. Typically, the spread is expressed as a negative number, which signifies the expected margin of victory for the favorite. In order to place a bet against the spread, a gambler generally needs to bet \$110 for the chance to win a \$100 payoff. The amount required for the chance to win \$100 is generally expressed in parentheses.
 e.g. Golden State Warriors -7.4 (-110) \\
      Cleveland Cavaliers 7.4 (-110)
 
@@ -90,9 +90,35 @@ The gambling authority generally selects the spread with the goal of splitting t
 
 \section{Data collection}
 For this project, we needed to gather a great deal of historical NBA game statistics in order to train our models. To collect season data, we primarily used publicly available data from \texttt{http://basketballvalue.com/downloads.php}.
-These datasets contained time series data in the form of matchup logs for all NBA games ranging from 2005 to 2012. Matchup logs basically describe the interactions that occur between 5-person units. A new entry is created every time a substitution is made in a game. Through running a python script on these matchup logs, we were able to derive and construct a variety of statistics that would later serve as features. For seasons 2005-2008, the matchup logs were a bit simpler, so we were only able to derive basic statistics including points allowed and points scored. The matchup logs became a bit more advanced in seasons 2008-2011, which allowed us to derive more sophisticated statistics including offensive and defensive rebounds as well as possessions.
+These datasets contained time series data in the form of matchup logs for all NBA games ranging from 2005 to 2012. Matchup logs basically describe the interactions that occur between 5-person units. A new entry is created every time a substitution is made in a game. Through running a python script on these matchup logs, we were able to derive and construct a variety of statistics that would later serve as features. For seasons 2005-2008, the matchup logs were a bit simpler, so we were only able to derive basic statistics including points allowed and points scored (see \textit{table 1}). The matchup logs became a bit more advanced in seasons 2008-2011, which allowed us to derive more sophisticated statistics including offensive and defensive (see \textit{table 2}). Note that while we had data for the 2011-2012 season we ultimately decided not to use the data because a lockout occurred during this season which shortened the season to 66 games.
 
-For all seasons, we also constructed a new feature called ELO that is basically a reflection of a teams performance taking into account strength of schedule. What this means is that if two teams possess identical records, one of the teams may actually have a higher ELO score if they had to face stronger competition. In our literature review, this was not a feature that had been incorporated before in machine learning so we were particularly excited about its implications.
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c |}
+      \hline
+		Avg. points scored/ game & Avg. points allowed/game  \\ \hline
+		Games played & Win rate        \\ \hline
+		Avg. home court points scored   & Avg. home court points allowed        \\ \hline
+		Home court games played   & Home court win rate      \\ \hline
+		ELO & Home court advantage\\ \hline
+    \end{tabular}
+  \end{center}
+  \caption{Basic statistics}
+\end{table}
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c |}
+      \hline
+		Avg. defensive rebounds/ game & Avg. offensive rebounds/ game  \\ \hline
+		Avg. possessions/ game & N/A       \\ \hline
+    \end{tabular}
+  \end{center}
+  \caption{Advanced statistics}
+\end{table}
+
+
+For all seasons, we also constructed a new feature called ELO that is basically a reflection of a team's performance taking into account strength of schedule. What this means is that if two teams possess identical records, one of the teams may actually have a higher ELO score if they had to face stronger competition. In our literature review, this was not a feature that had been incorporated before in machine learning so we were particularly excited about its implications.
 
 Many of the features generated for training and testing our predictor were derived from this game data. In order to create a general proxy for how strong a team was, we calculated running averages of points allowed, points scored, win rate, ELO, etc. and used these as input features to our classifier. These running averages were initialized to equal numbers for all teams at the beginning of the season and were subsequently updated as more data became available. Because these numbers were arbitrarily initialized to equal at the beginning of the season, however, running averages near the beginning of the season serve as less reliable data points, as outliers can significantly affect the running average.
 
@@ -210,15 +236,64 @@ Interestingly, when we train the linear classifier using only the win rate featu
 
 
 \section{Evaluation}
-In addition to calculating and analyzing the average spread error, we also compared our spreads predictions against other betting authorities' spreads. After creating a scaper which scraped the spreads posted by other betting authorities, we were able to determine the rate at which our spread would have beaten the betting authority's spread. This would occur in two scenarios: (1) if our predicted spread indicates that the winning team would have won by more than the other betting authority's predicted spread (e.g. if our spread is -8 and the other betting authority's spread is -5 on a game in which the favored team won by more than five points), or (2) if the predicted spread indicates that the winning team would have won by less or lost compared with theo ther begging authority's predicted spread (e.g. if our spread is +2 and the other betting authority's spread is -5 on a game in which the favored team lost or won by less than five points).
+In addition to calculating and analyzing the average spread error, we also compared our spreads predictions against other betting authorities' spreads. After creating a scraper which scraped the spreads posted by other betting authorities, we were able to determine the rate at which our spread would have beaten the betting authority's spread. This would occur in two scenarios: (1) if our predicted spread indicates that the winning team would have won by more than the other betting authority's predicted spread (e.g. if our spread is -8 and the other betting authority's spread is -5 on a game in which the favored team won by more than five points), or (2) if the predicted spread indicates that the winning team would have won by less or lost compared with theo ther begging authority's predicted spread (e.g. if our spread is +2 and the other betting authority's spread is -5 on a game in which the favored team lost or won by less than five points).
 
 
 \section{Potential sources of failure}
 Some drawbacks to the algorithm presented here include the fact that we do not examine individual player data. This was a choice made largely due to the fact that individualized player data is quite difficult to obtain, especially in quantities large enough for accurate training, validation, and testing. Because we look at a team's performance overall so far in the season however, this means that our algorithm is susceptible to changes in starting player lineups, player trades made during the season, and player injuries. Thus, despite the acceptable performance of our algorithm, we do identify this source of weakness in the ability to predict spreads and classify win/loss in matchups. Future iterations of the algorithm would therefore primarily seek to address these potential sources of failure in order to further improve and refine the overall predictive power of the algorithm.
 
+\section{Neural Networks Approach}
+After using a linear regression method to predict game outcomes as well as spreads, we next explored the use of neural networks for the very same problem. While we considered a multitude of neural networks at first, we ultimately decided to use a back-propagation multi-layer perceptron network provided by scikit learn for several reasons. First, the back-propagation aspect of the network allows us to perform supervised learning, which was our original goal. Secondly, the flexibility of this network made it very easy to change various hyperparameters such as the degree of regularization and the hidden layers size in order optimize for predictive capability. Finally, the network is able to perform both classification as well as regression, which enables us to make predictions for the two forms of bets that we are interested in.
+
+\subsection{Design Decisions}
+The relu activation function was the activation function of choice for the hidden layers because of sparsity as well as a reduced likelihood of vanishing gradients. For our weight optimization algorithm, we chose to use a batch gradient descent algorithm called the Limited-memory Broyden-Fletcher-Goldfarb-Shanno (LBFGS) algorithm in stead of a stochastic gradient descent (SGD) algorithm. The rational behind this design decision was due to the relatively small size of our dataset. With only 300/ 900 samples for each phase of classification we didn't really need the speed offered by SGD and empirically, we found LBFGS to be much more accurate. Because the weights of the network are initialized randomly we decided to also utilize a consensus based approach. For classification, this means that each prediction we make is actually the mode of the outcome of 7 predictions by the same neural network. Thus, if the neural network predicts the home team wins in 5 instances, and that the away team wins in 2 instances, we would predict that the home team wins. For regression, this means that each spread prediction we make is actually the mean of the outcome of 7 spreads made by the same neural network.
+
+\subsection{Predicting win/loss}
+As mentioned previously, predicting the winner of a particular NBA game boils down to a classification problem. 
+
+\subsubsection{Training}
+The input (X) to the multi-layer perceptron (MLP) classifier is a vector containing features for the two teams that are playing each other. At first, we utilized only the basic features but then we also incorporated the advanced features to see if we could improve performance. The Y values given to the classifier were either 1 (if the home team wins) or 0. Additionally, we tested our classifier on both 1 season of data (2008-2009) as well as 3 seasons of data (2008-2011). We also tested both normalized and un-normalized data and found that normalization had no impact on the ultimate accuracy of the classifiers. 
+
+\subsubsection{Validation}
+The purpose of validation is to determine the optimum hyperparameters for our neural network, which in our case is the regularization parameter as well as the size of the hidden layers. Through early testing/ experimentation it was discovered that hidden layers containing around 5-20 neurons performed the best so we incorporated that in creating our set of potential hidden layer sizes. Table shows validation results for 3 seasons of data using both both basic and advanced features. Table shows the aggregated validation results for classification.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c | c | c | c | }
+      \hline
+                         	(5,) & 	(10,) & 	(5,5) &  	(10,10) & 	(10,20,10) & 	(5,10,10,5)  \\ \hline
+	0       	            & 9.29         \\ \hline
+	0.0001      & 68.7\%            & 9.14         \\ \hline
+	0.01
+	0.1
+	1
+    \end{tabular}
+  \end{center}
+  \caption{Validation results for 2008-2011}
+\end{table}
+
+\subsubsection{Testing}
+After finding the optimal architecture for our MLP classifier we proceeded to test this architecture on the testing data. We had the following testing accuracies.
+
+As you can see, through using a neural network approach we were able to derive slightly better results for classification compared to the linear regression approach. Additionally, we were able to get accuracies that were a bit higher than the previous ones found in literature (68 \%). The next part of the testing included actually using our classifier to predict outcomes of future games. 
+
+\subsubsection{Overfitting}
+When experimenting with various architectures for the neural network it was discovered that there was an interesting tradeoff between hidden layer complexity and testing accuracy, which highly resembled overfitting. 
+
+\subsection{Predicting spreads}
+As mentioned previously, predicting the spread of a particular NBA game boils down to a regression problem.
+
+\subsubsection{Training}
+The input (X) to the multi-layer perceptron (MLP) regressor is the exact same as the input to the classifier. The Y values, however, are now the actual realized spreads/ game outcomes (away team score - home team score). Just like for classification, we also tested our classifier on both 1 season of data as well as 3 seasons. Additionally, we also found that normalization had no impact on the performance of our predictor. 
+
+\subsubsection{Validation}
+When finding the optimal architecture for our MLP regressor we used two different approaches for validation, which optimized for different things. The first approach involved optimizing the neural network to predict spreads that minimized the average prediction error for each game. For example, if our regressor predicts that the home team would win be 4 points, but in fact the away team wins by 2 points that results in an error of 6 points for that game. The second approach was a more direct approach towards our ultimate goal of beating the spread. It involves optimizing the neural network to specifically beat the spread. For example, if the spread favors the home team by 4 points, and our predictor predicts the home team wins by 6 points , and the actual home team wins by 8 points then this is considered "beating the spread". 
+
+\subsubsection{Testing}
+
 
 \section{Breakdown of individual work}
-The breakdown of work between the two members of the group largely followed that given in the original project proposal. Andrea and Tyson jointly worked on preliminary review of the current techniques and the state of the art. Following this, Tyson was primarily involved in the collection of game data from past seasons, and Andrea created the scraper to collect data on historical spreads put out by various betting organizations on previous games. Andrea explored preliminary models such as linear regression, logistic regression, and regression with various basis functions and various degrees of regularization, and Tyson chiefly explored a neural network approach. As discussed during the project proposal meeting, we decided not to implement a convolutional neural network for this problem, as the architecture did not fit the structure of the problem as closely. We each tested the models we worked on against data test sets and historical spreads, and we split the writing up of the report equally.
+The breakdown of work between the two members of the group largely followed that given in the original project proposal. Andrea and Tyson jointly worked on preliminary review of the current techniques and the state of the art. Following this, Tyson was primarily involved in the collection of game data from past seasons, and Andrea created the scraper to collect data on historical spreads put out by various betting organizations on previous games. Andrea explored preliminary models such as linear regression, logistic regression, and regression with various basis functions and various degrees of regularization, and Tyson chiefly explored a neural network approach to predicting spreads and win/loss. As discussed during the project proposal meeting, we decided not to implement a convolutional neural network for this problem, as the architecture did not fit the structure of the problem as closely. We each tested the models we worked on against data test sets and historical spreads, and we split the writing up of the report equally.
 
 
 \end{document}
