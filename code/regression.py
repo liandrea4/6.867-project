@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy             as np
 from sklearn            import linear_model
 import csv
 
@@ -117,8 +118,8 @@ def extract_from_file(filename, num_skip, y_fn):
         index += 1
         continue
 
-      # x = [ float(row[i]) for i in win_rate_indices ]
-      x = [ float(value) for value in row[5:] ]
+      x = [ float(row[i]) for i in win_rate_indices ]
+      # x = [ float(value) for value in row[5:] ]
       away_score = float(row[3])
       home_score = float(row[4])
       y = y_fn(away_score, home_score)
@@ -133,10 +134,7 @@ def extract_from_file(filename, num_skip, y_fn):
 
 
 def get_file_data(filename_training, filename_validation, filename_testing, num_skip, y_fn):
-  index = 0
-
   x_training, y_training = extract_from_file(filename_training, num_skip, y_fn)
-
   x_validate, y_validate = extract_from_file(filename_validation, num_skip, y_fn)
   x_testing, y_testing = extract_from_file(filename_testing, num_skip, y_fn)
 
@@ -144,9 +142,9 @@ def get_file_data(filename_training, filename_validation, filename_testing, num_
 
 
 def train_validate_test_classifier(data, classifier, metric_fn):
-  x_training, y_training = data[0], data[1]
-  x_validate, y_validate = data[2], data[3]
-  x_testing, y_testing = data[4], data[5]
+  x_training, y_training = data[0] + data[2] + data[4], data[1] + data[3] + data[5]
+  # x_validate, y_validate = data[2], data[3]
+  # x_testing, y_testing = data[4], data[5]
 
   classifier.fit(x_training, y_training)
 
@@ -154,8 +152,8 @@ def train_validate_test_classifier(data, classifier, metric_fn):
   # print "training: ", training
   # validation = metric_fn(x_validate, y_validate, classifier)
   # print "validation: ", validation
-  testing = metric_fn(x_testing, y_testing, classifier)
-  print "testing: ", testing
+  # testing = metric_fn(x_testing, y_testing, classifier)
+  # print "testing: ", testing
 
 
 if __name__ == '__main__':
@@ -174,28 +172,103 @@ if __name__ == '__main__':
 
   # Classification y in {0,1} indicates whether or not the home team won (1 = home team won)
 
-  data_win_lose = get_data(filename, num_skip, num_training, num_validate, num_testing, get_win_lose)
-  data_spreads = get_data(filename, num_skip, num_training, num_validate, num_testing, get_spread)
+  # data_win_lose = get_data(filename, num_skip, num_training, num_validate, num_testing, get_win_lose)
+  # data_spreads = get_data(filename, num_skip, num_training, num_validate, num_testing, get_spread)
 
-  # file_data_win_lose = get_file_data(filename_training, filename_validation, filename_testing, num_skip, get_win_lose)
-  # file_data_spreads = get_file_data(filename_training, filename_validation, filename_testing, num_skip, get_spread)
+  file_data_win_lose = get_file_data(filename_training, filename_validation, filename_testing, num_skip, get_win_lose)
+  file_data_spreads = get_file_data(filename_training, filename_validation, filename_testing, num_skip, get_spread)
 
-  linear_classifier = linear_model.LinearRegression()
-  logistic_classifier = linear_model.LogisticRegression()
-  lasso_classifier = linear_model.Lasso()
+  win_lose_model = linear_model.LinearRegression()
+  spreads_model = linear_model.LinearRegression()
+  # logistic_classifier = linear_model.LogisticRegression()
+  # lasso_classifier = linear_model.Lasso()
 
-  print "Linear classifier"
-  train_validate_test_classifier(data_win_lose, linear_classifier, get_accuracy)
+  # print "Linear classifier"
+  train_validate_test_classifier(file_data_win_lose, win_lose_model, get_accuracy)
   # print "Logistic classifier"
   # train_validate_test_classifier(data_win_lose, logistic_classifier, get_accuracy)
   # print "Lasso classifier"
   # train_validate_test_classifier(data_win_lose, lasso_classifier, get_accuracy)
 
-
   # print "Linear classifier"
-  # train_validate_test_classifier(file_data_win_lose, linear_classifier, get_accuracy)
+  train_validate_test_classifier(file_data_spreads, spreads_model, get_spread)
 
-  print "coeffs: ", linear_classifier.coef_
+  # print "coeffs: ", linear_classifier.coef_
+
+  # PREDICTIONS
+
+  charlotte = [0.56, 8./14]
+  indiana = [0.52, 10./14]
+  washington = [9./23, 7/13.]
+  miami = [8./25, 3/11.]
+  milwaukee = [11/23., 8/14.]
+  toronto = [17/24., 10/14.]
+  brooklyn = [6/23., 5/12.]
+  houston = [18/25., 9/13.]
+  denver = [9/25., 3/10.]
+  dallas = [6/24., 5/12.]
+  portland = [12/26., 7/11.]
+  clippers = [18/25., 9/13.]
+
+  philly = [6/24., 4/15.]
+  detroit = [13/26., 8/12.]
+  boston = [13/24., 5/10.]
+  ok_city = [15/24., 10/15.]
+  warriors = [21/25., 9/11.]
+  minnesota = [6/24., 3/12.]
+  new_orleans = [8/25., 5/13.]
+  phoenix = [7/24., 3/10.]
+  new_york = [14/24., 9/13.]
+  lakers = [10/27., 6/13.]
+
+  # WIN LOSE
+  # 1 = home team won, 0 = away team won
+  print win_lose_model.predict(philly + detroit)[0] < 0.5
+  print win_lose_model.predict(boston + ok_city)[0] > 0.5
+  print win_lose_model.predict(warriors + minnesota)[0] < 0.5
+  print win_lose_model.predict(new_orleans + phoenix)[0] < 0.5
+  print win_lose_model.predict(new_york + lakers)[0] < 0.5
+
+  # SPREADS
+  spreads = []
+  spreads.append(spreads_model.predict(philly + detroit)[0])
+  spreads.append(spreads_model.predict(boston + ok_city)[0])
+  spreads.append(spreads_model.predict(warriors + minnesota)[0])
+  spreads.append(spreads_model.predict(new_orleans + phoenix)[0])
+  spreads.append(spreads_model.predict(new_york + lakers)[0])
+
+  errors = []
+  errors.append(abs(spreads_model.predict(philly + detroit)[0] - (18)))
+  errors.append(abs(spreads_model.predict(boston + ok_city)[0] - (-3)))
+  errors.append(abs(spreads_model.predict(warriors + minnesota)[0] - (8)))
+  errors.append(abs(spreads_model.predict(new_orleans + phoenix)[0] - (1)))
+  errors.append(abs(spreads_model.predict(new_york + lakers)[0] - (6)))
+
+  print spreads
+  print sum(errors) / 5.
+  print np.std(errors)
+
+
+  # other_sum = [17.5, 14, 12.5, 9.5, 22.5, 9]
+  # print sum(other_sum) / 6.
+  # print np.std(other_sum)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   # index = range(len(feature_names))
   # plt.figure()
