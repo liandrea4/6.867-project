@@ -4,8 +4,8 @@ from regression  import get_data, train_validate_test_classifier
 import csv
 import pprint
 
-layer_sizes = [ (1,), (5,), (10,), (100,), (1,1), (5,5), (10,10), (100,100), (10, 20, 10), (5, 10, 10, 5) ]
-alphas = [ 0, 0.0001, 0.01, 0.1, 1, 10 ] # degree of regularizations
+layer_sizes = [ (5,), (10,), (5,5), (10,10), (10, 20, 10), (5, 10, 10, 5) ]
+alphas = [ 0, 0.0001, 0.01, 0.1, 1 ] # degree of regularizations
 
 def get_win_lose(away_score, home_score):
   return home_score > away_score
@@ -46,6 +46,42 @@ def get_data(filename, num_skip, num_training, num_validate, num_testing, y_fn):
 
   return [x_training, y_training, x_validate, y_validate, x_testing, y_testing]
 
+def extract_from_file(filename, num_skip, y_fn):
+  index = 0
+  x_list, y_list = [], []
+
+  with open(filename, 'rU') as f:
+    reader = csv.reader(f)
+    for row in reader:
+
+      if index == 0:
+        index += 1
+        continue
+
+      # x = [ float(row[i]) for i in win_rate_indices ]
+      x = [ float(value) for value in row[5:] ]
+      away_score = float(row[3])
+      home_score = float(row[4])
+      y = y_fn(away_score, home_score)
+
+      if index > num_skip:
+        x_list.append(x)
+        y_list.append(y)
+
+      index += 1
+
+  return x_list, y_list
+
+
+def get_file_data(filename_training, filename_validation, filename_testing, num_skip, y_fn):
+  index = 0
+
+  x_training, y_training = extract_from_file(filename_training, num_skip, y_fn)
+
+  x_validate, y_validate = extract_from_file(filename_validation, num_skip, y_fn)
+  x_testing, y_testing = extract_from_file(filename_testing, num_skip, y_fn)
+
+  return [x_training, y_training, x_validate, y_validate, x_testing, y_testing]
 def find_best_architecture(data, Classify_or_regress):
   max_accuracy = 0
   max_score = 20
@@ -142,6 +178,10 @@ def calculate_validation_score_nn_regressor(data, score_predictor):
 if __name__ == '__main__':
   filename = "data/2008-2009 Game Log.csv" # "data/game_log_06_07.csv"
   
+  filename_training = "data/2008-2009 Game Log.csv"
+  filename_validation = "data/2009-2010 Game Log.csv"
+  filename_testing = "data/2010-2011 Game Log.csv"
+
   num_skip = 320 # stabilized by ~ each team's 20th game
   num_training = 300
   num_validate = 300
@@ -152,13 +192,15 @@ if __name__ == '__main__':
   data_win_lose = get_data(filename, num_skip, num_training, num_validate, num_testing, get_win_lose)
   data_spreads = get_data(filename, num_skip, num_training, num_validate, num_testing, get_spread)
 
+  data_win_lose_2 = get_file_data(filename_training, filename_validation, filename_testing, num_skip, get_win_lose)
+
   #print calculate_average_point_differential(data_spreads)
 
 
   # clf = neural_network.MLPClassifier(solver = 'lbfgs', alpha = 0.1, hidden_layer_sizes = (10,))
   # clf.fit(data_win_lose[0], data_win_lose[1])
   # print clf.score(data_win_lose[4], data_win_lose[5])
-  best_architecture = find_best_architecture(data_spreads, False)
+  best_architecture = find_best_architecture(data_win_lose_2, True)
   pprint.pprint(best_architecture[3])
   # best_classifier = neural_network.MLPRegressor(hidden_layer_sizes=best_architecture[0], solver="lbfgs", alpha=best_architecture[1])
   # print get_testing_error(data_win_lose, best_classifier)
