@@ -6,6 +6,7 @@ import pprint
 
 layer_sizes = [ (5,), (10,), (5,5), (10,10), (10, 20, 10), (5, 10, 10, 5) ]
 alphas = [ 0, 0.0001, 0.01, 0.1, 1 ] # degree of regularizations
+win_rate_indices = [ 10, 14, 23, 27 ]
 
 def get_win_lose(away_score, home_score):
   return home_score > away_score
@@ -58,8 +59,8 @@ def extract_from_file(filename, num_skip, y_fn):
         index += 1
         continue
 
-      # x = [ float(row[i]) for i in win_rate_indices ]
-      x = [ float(value) for value in row[5:] ]
+      x = [ float(row[i]) for i in win_rate_indices ]
+      #x = [ float(value) for value in row[5:] ]
       away_score = float(row[3])
       home_score = float(row[4])
       y = y_fn(away_score, home_score)
@@ -200,11 +201,11 @@ if __name__ == '__main__':
   # clf = neural_network.MLPClassifier(solver = 'lbfgs', alpha = 0.1, hidden_layer_sizes = (10,))
   # clf.fit(data_win_lose[0], data_win_lose[1])
   # print clf.score(data_win_lose[4], data_win_lose[5])
-  best_architecture = find_best_architecture(data_spreads_2, False)
+  best_architecture = find_best_architecture(data_win_lose_2, True)
   pprint.pprint(best_architecture[3])
-  best_predictor = neural_network.MLPRegressor(hidden_layer_sizes=best_architecture[0], solver="lbfgs", alpha=best_architecture[1])
-  best_predictor.fit(data_spreads[0], data_spreads[1])
-  print calculate_testing_score_nn_regressor(data_spreads_2, best_predictor)
+  best_predictor = neural_network.MLPClassifier(hidden_layer_sizes=best_architecture[0], solver="lbfgs", alpha=best_architecture[1])
+  #best_predictor.fit(data_spreads_2[0], data_spreads_2[1])
+  print get_testing_error_classifier(data_win_lose_2, best_predictor)
 
   # score_predictor = neural_network.MLPRegressor( solver = 'lbfgs', alpha = best_architecture[1], hidden_layer_sizes = best_architecture[0])
   # score_predictor.fit(data_spreads[0], data_spreads[1])

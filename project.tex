@@ -255,10 +255,10 @@ The ReLu function was the activation function of choice for the hidden layers be
 As mentioned previously, predicting the winner of a particular NBA game boils down to a classification problem.
 
 \subsubsection{Training}
-The input (X) to the multi-layer perceptron (MLP) classifier is a vector containing features for the two teams that are playing each other. At first, we utilized only the basic features but then we also incorporated the advanced features to see if we could improve performance. The Y values given to the classifier were either 1 (if the home team wins) or 0. Additionally, we tested our classifier on both 1 season of data (2008-2009) as well as 3 seasons of data (2008-2011). We also tested both normalized and un-normalized data and found that normalization had no impact on the ultimate accuracy of the classifiers.
+The input (X) to the multi-layer perceptron (MLP) classifier is a vector containing features for the two teams that are playing each other. At first, we utilized only the basic features but then we also incorporated the advanced features as well as just the win rate featurs to see if we could improve performance. The Y values given to the classifier were either 1 (if the home team wins) or 0. Additionally, we tested our classifier on both 1 season of data (2008-2009) as well as 3 seasons of data (2008-2011). We also tested both normalized and un-normalized data and found that normalization had no impact on the ultimate accuracy of the classifiers.
 
 \subsubsection{Validation}
-The purpose of validation is to determine the optimum hyperparameters for our neural network, which in our case is the regularization parameter as well as the size of the hidden layers. Through early testing/ experimentation it was discovered that hidden layers containing around 5-20 neurons performed the best so we incorporated that in creating our set of potential hidden layer sizes. Table 7 shows validation results for 3 seasons of data using both both basic and advanced features. The column headers are the hidden layer sizes (the $i^{th}$ number represents the number of hidden neurons in the $i^{th}$ hidden layer. The row headers are the various regularization coefficients we tried. Table 8 shows the aggregated validation results for classification.
+The purpose of validation is to determine the optimum hyperparameters for our neural network, which in our case is the regularization parameter as well as the size of the hidden layers. Through early testing/ experimentation it was discovered that hidden layers containing around 5-20 neurons performed the best so we incorporated that in creating our set of potential hidden layer sizes. Table 7 shows validation results for 3 seasons of data using both both basic and advanced features. The column headers are the hidden layer sizes (the $i^{th}$ number represents the number of hidden neurons in the $i^{th}$ hidden layer. The row headers are the various regularization coefficients we tried. We can see that using a regularization parameter of 0.0001 with one hidden layer consisting of 10 neurons yielded the best results Table 8 shows the aggregated validation results for classification. As a general trend, we see that the validation accuracy was almost always better with 3 seasons of data. 
 
 \begin{table}
   \begin{center}
@@ -276,7 +276,19 @@ The purpose of validation is to determine the optimum hyperparameters for our ne
   \caption{Validation results for 2008-2011}
 \end{table}
 
+\begin{table}
+  \begin{center}
+    \begin{tabular}{ | c | c | c | c |}
+      \hline
+            &            	basic features & 	full features &  win rate features  \\ \hline
+	2008 season  &     	0.665 & 	0.679 & 0.672    \\ \hline
+	2008-2011 seasons &   0.679&  0.687 & 0.680  \\ \hline	
 
+	
+    \end{tabular}
+  \end{center}
+  \caption{Aggregate validation results}
+\end{table}
 
 \subsubsection{Testing}
 
@@ -286,9 +298,9 @@ After finding the optimal architecture for our MLP classifier in each situation 
   \begin{center}
     \begin{tabular}{ | c | c | c |}
       \hline
-            &            	basic features & 	full features \\ \hline
-	2008 season  &     	0.675 & 	0.672    \\ \hline
-	2008-2011 seasons &   0.682&  0.693 \\ \hline	
+            &            	basic features & 	full features & win rate features   \\ \hline
+	2008 season  &     	0.660 & 	0.672  & 0.687  \\ \hline
+	2008-2011 seasons &   0.671&  0.693 & 0.695\\ \hline	
 
 	
     \end{tabular}
@@ -297,11 +309,11 @@ After finding the optimal architecture for our MLP classifier in each situation 
 \end{table}
 
 
-As you can see, through using a neural network approach we were able to derive slightly better results for classification compared to the linear regression approach. Additionally, we were able to get accuracies that were a bit higher than the previous ones found in literature (68 \%). 
+We were able to get accuracies that were a bit higher than the previous ones found in literature (68 \%). Even though using win rate features alone performed poorer than using the complete set of features during validation, it actually appears that using purely win rate features yielded a slightly higher accuracy during testing.
 
 
 \subsubsection{Overfitting}
-When experimenting with various architectures for the neural network it was discovered that there was an interesting tradeoff between hidden layer complexity and testing accuracy, which highly resembled overfitting.
+When experimenting with various architectures for the neural network it was discovered that there was an interesting tradeoff between hidden layer complexity and testing accuracy, which highly resembled overfitting. We found that as we increased the number of hidden neurons in each hidden layer, we could increase training accuracy substantially but this ultimately resulted in extremely poor validation and testing accuracy.
 
 \subsection{Predicting spreads}
 As mentioned previously, predicting the spread of a particular NBA game boils down to a regression problem.
@@ -311,19 +323,25 @@ The input (X) to the multi-layer perceptron (MLP) regressor is the exact same as
 
 \subsubsection{Validation}
 
-When finding the optimal architecture for our MLP regressor we used two different approaches for validation, which optimized for different things. The first approach involved optimizing the neural network to predict spreads that minimized the average prediction error for each game. For example, if our regressor predicts that the home team would win be 4 points, but in fact the away team wins by 2 points that results in an error of 6 points for that game. The second approach was a more direct approach towards our ultimate goal of beating the spread. It involves optimizing the neural network to specifically beat the spread. For example, if the spread favors the home team by 4 points, and our predictor predicts the home team wins by 6 points , and the actual home team wins by 8 points then this is considered "beating the spread". Ultimately, we will choose the architecture that has the highest "beating the spread" rate. Table 10 shows validation results (with approach 1) for 3 seasons of data using both both basic and advanced features. Table 11 shows the aggregated validation results for validation approach 1 while Table 12 shows the aggregated validation results for validation approach 2.
-
+When finding the optimal architecture for our MLP regressor we used two different approaches for validation, which optimized for different things. The first approach involved optimizing the neural network to predict spreads that minimized the average prediction error for each game. For example, if our regressor predicts that the home team would win be 4 points, but in fact the away team wins by 2 points that results in an error of 6 points for that game. The second approach was a more direct approach towards our ultimate goal of beating the spread. It involves optimizing the neural network to specifically beat the spread. For example, if the spread favors the home team by 4 points, and our predictor predicts the home team wins by 6 points , and the actual home team wins by 8 points then this is considered "beating the spread". Ultimately, we wanted to choose the architecture that has the highest "beating the spread" rate. Unfortunately, after experimenting a bit, we saw that there was absolutely no difference between the two validation approaches so we just resorted to the first one. Table 10 shows validation results (with approach 1) for 3 seasons of data using both both basic and advanced features. Table 11 shows the aggregated validation results for validation.
 \begin{table}
   \begin{center}
-    \begin{tabular}{ | c | c | c | c | c | c | c |}
+    \begin{tabular}{ | c | c | c | c |}
       \hline
-            &             	(5,) & 	(10,) & 	(5,5) &  	(10,10) & 	(10,20,10) & 	(5,10,10,5)  \\ \hline
-	0  &     	10.54 & 	9.52&	9.55&	9.50&	\textbf{9.44}&	10.54	    \\ \hline
-	0.0001 &   9.56 &     	9.49&	9.56&	9.51&	9.51&		9.46	    \\ \hline	
-	0.01  &    	9.55 &     	9.50& 	9.45&	9.51&	10.54&		9.46	    \\ \hline	
-	0.1	&	9.47&	9.55 &	9.50&	9.53&	9.50&		9.45	    \\ \hline
-	1&		9.52&	09.51&	10.54&	9.49&	9.58&		9.48	    \\ \hline
-	
+            &             	\textbf{(5,)} & 	\textbf{(10,)} & 	\textbf{(5,5)}   	 \\ \hline
+	0  &     	10.54 & 	9.52&	9.55	  \\ \hline
+	0.0001 &   9.56 &     	9.49&	9.56 \\ \hline	
+	0.01  &    	9.55 &     	9.50& 	9.45    \\ \hline	
+	0.1	&	9.47&	9.55 &	9.50  \\ \hline
+	1	&	9.52 &	09.51&	 10.21\\ \hline
+		&	\textbf{(10,10)} & 	\textbf{(10,20,10)} & 	\textbf{(5,10,10,5)}  \\ \hline
+		0&	9.50&	\textbf{9.44}&	10.54	    \\ \hline
+		0.0001& 9.51&		9.51&	9.46	    \\ \hline	
+		0.01 & 9.51&	10.54&		9.46	    \\ \hline	
+		0.1 & 9.53&	9.50&		9.45	    \\ \hline
+		1 & 9.49&	9.58&		9.48	    \\ \hline
+
+
     \end{tabular}
   \end{center}
   \caption{Validation results for 2008-2011}
@@ -333,9 +351,9 @@ When finding the optimal architecture for our MLP regressor we used two differen
   \begin{center}
     \begin{tabular}{ | c | c | c |}
       \hline
-            &            	basic features & 	full features \\ \hline
-	2008 season  &     	9.84 & 	9.55    \\ \hline
-	2008-2011 seasons &   9.60&  9.44 \\ \hline	
+            &            	basic features & 	full features & win rate features \\ \hline
+	2008 season  &     	9.84 & 	9.55 & 9.48    \\ \hline
+	2008-2011 seasons &   9.60&  9.44 & 9.21 \\ \hline	
 
 	
     \end{tabular}
@@ -343,16 +361,18 @@ When finding the optimal architecture for our MLP regressor we used two differen
   \caption{Aggregate validation results (approach 1)}
 \end{table}
 
+We see here that using the win rate features with the 3 seasons of data yielded the best validation results. Interestingly, enough the architecture that performed the best in almost all cases consisted of a regularization value of $0.0001$ and a hidden layer size of (10,20,10).
+
 \subsubsection{Testing}
-After finding the optimal architecture for our MLP regressor in each situation we proceeded to test the regressor on the testing data. The testing results with regards to minimizing spread error is shown in Table 13. One of the interesting findings from these validation and testing results is that the predictor almost always does better with more data as well as more features. With the additional data it is quite intuitive why this is the case. With the additional features, our hypothesis is that the home court marginals might be playing a large impact in the predictions.  
+After finding the optimal architecture for our MLP regressor in each situation we proceeded to test the regressor on the testing data. The testing results are shown in Table 13. One of the interesting findings from these validation and testing results is that the predictor almost always does better with more data and that using either full features or win rate features consistently beats using basic features. With the additional data it is quite intuitive why this is the case. Regarding why full and win rate features outperform basic features our hypothesis is that the home court component plays a large part in the predictions.
 
 \begin{table}
   \begin{center}
     \begin{tabular}{ | c | c | c |}
       \hline
-            &            	basic features & 	full features \\ \hline
-	2008 season  &     	10.32 & 	10.2    \\ \hline
-	2008-2011 seasons &  10.09&  9.92 \\ \hline	
+            &            	basic features & 	full features & win rate features \\ \hline
+	2008 season  &     	10.32 & 	10.2  & 9.59   \\ \hline
+	2008-2011 seasons &  10.09&  9.92 & 9.14 \\ \hline	
 
 	
     \end{tabular}
@@ -368,13 +388,13 @@ We compared our best linear classifier (three seasons of data with only the four
 
 \begin{table}
   \begin{center}
-    \begin{tabular}{ | c | c | c | }
+    \begin{tabular}{ | c | c | c | c| }
       \hline
-                       & Spread Error      & Win rate  \\ \hline
-      Authority A      & 8.70              & 48.2\%    \\ \hline
-      Authority B      & 8.65              & 46.6\%    \\ \hline
-      Authority C      & 8.67              & 48\%      \\ \hline
-      Authority D      & 8.67              & 47.8\%    \\ \hline
+                       & Spread Error      &LC  Win rate &NN Win rate \\ \hline
+       A      & 8.70              & 48.2\% &47.2\%   \\ \hline
+      B      & 8.65              & 46.6\%  &46.5\%  \\ \hline
+      C      & 8.67              & 48\%      &47.3\%	\\ \hline
+	D      & 8.67              & 47.8\%    &46.9\%\\ \hline
     \end{tabular}
   \end{center}
   \caption{Comparison with other betting authorities}
