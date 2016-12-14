@@ -157,7 +157,7 @@ These results for the performance of the linear classifier are summarized in Tab
       \hline
                       & Win/Lose Accuracy & Spread Error  \\ \hline
       Basic features  & 63.3\%            & 10.07         \\ \hline
-      Extra features  & 66.9\%            & 13.60         \\ \hline
+      Full features  & 66.9\%            & 13.60         \\ \hline
     \end{tabular}
   \end{center}
   \caption{Classifier performance on test dataset}
@@ -266,11 +266,11 @@ The purpose of validation is to determine the optimum hyperparameters for our ne
       \hline
             &             	(5,) & 	(10,) & 	(5,5) &  	(10,10) & 	(10,20,10) & 	(5,10,10,5)  \\ \hline
 	0  &     	0.684 & 	0.671&	0.665&	0.683&	0.654&		0.671	    \\ \hline
-	0.0001 &   0.589 &     \textbf{0.687}&	0.671&	0.673&	0.659&		0.669	    \\ \hline	
-	0.01  &    	0.670 &     0.665&	0.589&	0.673&	0.653&		0.669	    \\ \hline	
+	0.0001 &   0.589 &     \textbf{0.687}&	0.671&	0.673&	0.659&		0.669	    \\ \hline
+	0.01  &    	0.670 &     0.665&	0.589&	0.673&	0.653&		0.669	    \\ \hline
 	0.1	&	0.677&	0.672&	0.589&	0.676&	0.645&		0.680	    \\ \hline
 	1&		0.675&	0.673&	0.665&	0.673&	0.669&		0.589	    \\ \hline
-	
+
     \end{tabular}
   \end{center}
   \caption{Validation results for 2008-2011}
@@ -286,18 +286,18 @@ After finding the optimal architecture for our MLP classifier in each situation 
   \begin{center}
     \begin{tabular}{ | c | c | c |}
       \hline
-            &            	basic features & 	full features \\ \hline
+            &            	Basic features & 	Full features \\ \hline
 	2008 season  &     	0.675 & 	0.672    \\ \hline
-	2008-2011 seasons &   0.682&  0.693 \\ \hline	
+	2008-2011 seasons &   0.682&  0.693 \\ \hline
 
-	
+
     \end{tabular}
   \end{center}
   \caption{Aggregate testing results}
 \end{table}
 
 
-As you can see, through using a neural network approach we were able to derive slightly better results for classification compared to the linear regression approach. Additionally, we were able to get accuracies that were a bit higher than the previous ones found in literature (68 \%). 
+As you can see, through using a neural network approach we were able to derive slightly better results for classification compared to the linear regression approach. Additionally, we were able to get accuracies that were a bit higher than the previous ones found in literature (68 \%).
 
 
 \subsubsection{Overfitting}
@@ -319,11 +319,11 @@ When finding the optimal architecture for our MLP regressor we used two differen
       \hline
             &             	(5,) & 	(10,) & 	(5,5) &  	(10,10) & 	(10,20,10) & 	(5,10,10,5)  \\ \hline
 	0  &     	10.54 & 	9.52&	9.55&	9.50&	\textbf{9.44}&	10.54	    \\ \hline
-	0.0001 &   9.56 &     	9.49&	9.56&	9.51&	9.51&		9.46	    \\ \hline	
-	0.01  &    	9.55 &     	9.50& 	9.45&	9.51&	10.54&		9.46	    \\ \hline	
+	0.0001 &   9.56 &     	9.49&	9.56&	9.51&	9.51&		9.46	    \\ \hline
+	0.01  &    	9.55 &     	9.50& 	9.45&	9.51&	10.54&		9.46	    \\ \hline
 	0.1	&	9.47&	9.55 &	9.50&	9.53&	9.50&		9.45	    \\ \hline
 	1&		9.52&	09.51&	10.54&	9.49&	9.58&		9.48	    \\ \hline
-	
+
     \end{tabular}
   \end{center}
   \caption{Validation results for 2008-2011}
@@ -335,16 +335,16 @@ When finding the optimal architecture for our MLP regressor we used two differen
       \hline
             &            	basic features & 	full features \\ \hline
 	2008 season  &     	9.84 & 	9.55    \\ \hline
-	2008-2011 seasons &   9.60&  9.44 \\ \hline	
+	2008-2011 seasons &   9.60&  9.44 \\ \hline
 
-	
+
     \end{tabular}
   \end{center}
   \caption{Aggregate validation results (approach 1)}
 \end{table}
 
 \subsubsection{Testing}
-After finding the optimal architecture for our MLP regressor in each situation we proceeded to test the regressor on the testing data. The testing results with regards to minimizing spread error is shown in Table 13. One of the interesting findings from these validation and testing results is that the predictor almost always does better with more data as well as more features. With the additional data it is quite intuitive why this is the case. With the additional features, our hypothesis is that the home court marginals might be playing a large impact in the predictions.  
+After finding the optimal architecture for our MLP regressor in each situation we proceeded to test the regressor on the testing data. The testing results with regards to minimizing spread error is shown in Table 13. One of the interesting findings from these validation and testing results is that the predictor almost always does better with more data as well as more features. With the additional data it is quite intuitive why this is the case. With the additional features, our hypothesis is that the home court marginals might be playing a large impact in the predictions.
 
 \begin{table}
   \begin{center}
@@ -352,9 +352,9 @@ After finding the optimal architecture for our MLP regressor in each situation w
       \hline
             &            	basic features & 	full features \\ \hline
 	2008 season  &     	10.32 & 	10.2    \\ \hline
-	2008-2011 seasons &  10.09&  9.92 \\ \hline	
+	2008-2011 seasons &  10.09&  9.92 \\ \hline
 
-	
+
     \end{tabular}
   \end{center}
   \caption{Aggregate testing results (approach 1)}
@@ -457,9 +457,11 @@ Some drawbacks to the algorithm presented here include the fact that we do not e
 
 Future iterations of this algorithm would explore the addition of features such as the number of assists, steals, blocks, turnovers, and fouls per game, as well as assist to turnover ratio and average player efficiency ratings.
 
+\section{Conclusion}
+In this report, we have explored the use of supervised machine learning techniques to predict win/loss and spreads on basketball matchups in the NBA. We primarily explored the use of linear classifiers and neural networks in our approach, where we explored various levels of regularization, architectures, features, and seasons of data. We found that overall the best polynomial basis classifier was a linear classifier which only took win rate features (home/away team win rate and home/away team home court win rate) into account. This classifier was able to achieve about 70\% accuracy in predicting win/loss and had an average spread error of 8.95 points when compared with the actual spread. We found that for the neural networks, classification of win/loss was best with greater regularization and fewer hidden layers (an optimal architecture of (10) and $\alpha = 0.1$), whereas regression was optimal with a smaller regularization term and more hidden layers (an optimal architecture of (5,10,10,5) and $\alpha = 0.0001$). Overall, we were unable to reliably beat the spreads published professional betting organizations when analyzing historical data. When examining game matchups from the current season however, based on our limited access to data, we found that our classifiers did indeed do a remarkable job of outperforming and winning against the professional spreads, especially when we adopted a more conservative approach.
 
 \section{Breakdown of individual work}
-The breakdown of work between the two members of the group largely followed that given in the original project proposal. Andrea and Tyson jointly worked on preliminary review of the current techniques and the state of the art. Following this, Tyson was primarily involved in the collection of game data from past seasons, and Andrea created the scraper to collect data on historical spreads put out by various betting organizations on previous games. Andrea explored preliminary models such as linear regression and regression with various basis functions, and Tyson chiefly explored a neural network approach . As discussed during the project proposal meeting, we decided not to implement a convolutional neural network for this problem, as the architecture did not fit the structure of the problem as closely. We each tested the models we worked on against data test sets, historical spreads, and games in the current season. We split the writing up of the report equally, where Andrea wrote part of the data collection, linear classifier, linear classifier evaluation, and potential sources of failure sections, and Tyson wrote up the introduction, part of the data collection, neural network, and neural network evaluation sections.
+The breakdown of work between the two members of the group largely followed that given in the original project proposal. Andrea and Tyson jointly worked on preliminary review of the current techniques and the state of the art. Following this, Tyson was primarily involved in the collection of game data from past seasons, and Andrea created the scraper to collect data on historical spreads put out by various betting organizations on previous games. Andrea explored preliminary models such as linear regression and regression with various basis functions, and Tyson chiefly explored a neural network approach. As discussed during the project proposal meeting, we decided not to implement a convolutional neural network for this problem, as the architecture did not fit the structure of the problem as closely. We each tested the models we worked on against data test sets, historical spreads, and games in the current season. We split the writing up of the report equally, where Andrea wrote part of the data collection, linear classifier, linear classifier evaluation, and potential sources of failure sections, and Tyson wrote up the introduction, part of the data collection, neural network, and neural network evaluation sections.
 
 
 \end{document}
